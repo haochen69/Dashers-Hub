@@ -3,172 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AETHER | Game Hub</title>
+    <title>Dasher's Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        /* RESTORING YOUR ORIGINAL STYLES */
-        body {
-            margin: 0;
-            background-color: #0f0f12;
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
+        :root {
+            --bg: #0b0e14;
+            --surface: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-dim: #9aa0a6;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Lexend', sans-serif;
             overflow-x: hidden;
         }
 
-        nav {
-            display: flex;
-            justify-content: space-between;
-            padding: 1.5rem 5%;
-            background: rgba(15, 15, 18, 0.8);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+        /* Background Effects */
+        .dot-bg {
+            position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+            background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            transform: rotate(15deg);
+            z-index: -1;
+            animation: move 100s linear infinite;
         }
 
-        .logo {
-            font-size: 1.5rem;
+        @keyframes move {
+            from { transform: rotate(15deg) translateY(0); }
+            to { transform: rotate(15deg) translateY(-1000px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-size: 3.5rem;
             font-weight: 800;
-            letter-spacing: 2px;
-            background: linear-gradient(90deg, #a855f7, #6366f1);
+            margin: 0;
+            letter-spacing: -2px;
+            background: linear-gradient(to right, #fff, #666);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .container { padding: 3rem 5%; }
+        .search-container {
+            position: relative;
+            max-width: 500px;
+            margin: 30px auto;
+        }
 
-        .grid {
+        #gameSearch {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 15px 25px;
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #gameSearch:focus {
+            border-color: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.07);
+        }
+
+        .game-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 25px;
         }
 
         .game-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.3s ease;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 12px;
             cursor: pointer;
-            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
         }
 
         .game-card:hover {
-            transform: translateY(-5px);
-            border-color: #a855f7;
-            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2);
+            transform: translateY(-8px);
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.2);
         }
 
-        .game-img {
+        .thumb {
             width: 100%;
-            height: 150px;
-            background: #1a1a20;
+            aspect-ratio: 1;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            background: #161b22;
+        }
+
+        .thumb img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
         }
 
-        .game-info {
-            padding: 12px;
-            text-align: center;
+        .game-name {
+            font-weight: 600;
             font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        /* Fullscreen Game Overlay */
-        #game-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: #000;
-            z-index: 999;
-        }
-
-        #game-frame { width: 100%; height: 100%; border: none; }
-
-        .back-btn {
-            position: absolute;
-            top: 15px; left: 15px;
-            padding: 10px 15px;
-            background: #a855f7;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            z-index: 1000;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 </head>
 <body>
-
-    <nav>
-        <div class="logo">AETHER</div>
-        <div class="links">Settings | Proxy | Games</div>
-    </nav>
+    <div class="dot-bg"></div>
 
     <div class="container">
-        <div class="grid" id="game-grid">
-            <div class="game-card" onclick="play('1v1space')">
-                <div class="game-img">🎯</div>
-                <div class="game-info">1v1 Space</div>
+        <header>
+            <h1>Dasher's Hub</h1>
+            <div class="search-container">
+                <input type="text" id="gameSearch" placeholder="Search games..." onkeyup="filterGames()">
             </div>
+        </header>
 
-            <div class="game-card" onclick="play('2048')">
-                <div class="game-img">🔢</div>
-                <div class="game-info">2048</div>
+        <div class="game-grid" id="gameGrid">
             </div>
-
-            <div class="game-card" onclick="play('among-us')">
-                <div class="game-img">🚀</div>
-                <div class="game-info">Among Us</div>
-            </div>
-
-            <div class="game-card" onclick="play('retro-bowl')">
-                <div class="game-img">🏈</div>
-                <div class="game-info">Retro Bowl</div>
-            </div>
-
-            <div class="game-card" onclick="play('cookie-clicker')">
-                <div class="game-img">🍪</div>
-                <div class="game-info">Cookie Clicker</div>
-            </div>
-
-            <div class="game-card" onclick="play('bloonstd')">
-                <div class="game-img">🎈</div>
-                <div class="game-info">Bloons TD</div>
-            </div>
-
-            <div class="game-card" onclick="play('the-worlds-hardest-game')">
-                <div class="game-img">⏹️</div>
-                <div class="game-info">World's Hardest Game</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="game-overlay">
-        <button class="back-btn" onclick="closeGame()">← Back</button>
-        <iframe id="game-frame"></iframe>
     </div>
 
     <script>
-        // FIXED PATH LOGIC
-        // Based on your files, the path is always: folder_name/index.html
-        function play(folder) {
-            const overlay = document.getElementById('game-overlay');
-            const frame = document.getElementById('game-frame');
-            
-            // This fixes the "doesnt exist" error by using your exact folder structure 
-            frame.src = folder + "/index.html"; 
-            overlay.style.display = "block";
+        const games = [
+            { id: '1', name: '2048' },
+            { id: '1v1space', name: '1v1.space' },
+            { id: '2048', name: '2048' },
+            { id: '9007199254740992', name: '9007199254740992' },
+            { id: 'achievementunlocked', name: 'Achievement Unlocked' },
+            { id: 'adrenalinechallenge', name: 'Adrenaline Challenge' },
+            { id: 'among-us', name: 'Among Us' },
+            { id: 'avalanche', name: 'Avalanche' },
+            { id: 'backrooms', name: 'Backrooms' },
+            { id: 'basketball-stars', name: 'Basketball Stars' },
+            { id: 'battleforgondor', name: 'Battle for Gondor' },
+            { id: 'bigredbutton', name: 'Big Red Button' },
+            { id: 'blackknight', name: 'Black Knight' },
+            { id: 'bloonstd', name: 'Bloons TD' },
+            { id: 'bloonstd2', name: 'Bloons TD 2' },
+            { id: 'bloxors', name: 'Bloxorz' },
+            { id: 'boxhead2play', name: 'Boxhead 2Play' },
+            { id: 'breakingthebank', name: 'Breaking the Bank' }
+        ];
+
+        // Sort games by name
+        games.sort((a, b) => a.name.localeCompare(b.name));
+
+        const grid = document.getElementById('gameGrid');
+
+        function loadGames() {
+            grid.innerHTML = ''; 
+            games.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                
+                // Modified to look for .jpg for the logo and .html for the launch file 
+                const iconPath = `./gameslist/${game.id}/${game.id}.jpg`;
+                const gamePath = `./gameslist/${game.id}/index.html`;
+
+                card.innerHTML = `
+                    <div class="thumb">
+                        <img src="${iconPath}" onerror="this.src='https://via.placeholder.com/150/161b22/ffffff?text=${game.name[0]}'">
+                    </div>
+                    <span class="game-name">${game.name}</span>
+                `;
+                
+                card.onclick = () => window.location.href = gamePath;
+                grid.appendChild(card);
+            });
         }
 
-        function closeGame() {
-            document.getElementById('game-overlay').style.display = "none";
-            document.getElementById('game-frame').src = "";
+        function filterGames() {
+            let input = document.getElementById('gameSearch').value.toLowerCase();
+            let cards = document.getElementsByClassName('game-card');
+            for (let i = 0; i < cards.length; i++) {
+                let name = cards[i].querySelector('.game-name').innerText.toLowerCase();
+                cards[i].style.display = name.includes(input) ? "" : "none";
+            }
         }
+
+        window.onload = loadGames;
     </script>
 </body>
 </html>
