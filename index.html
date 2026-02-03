@@ -24,6 +24,7 @@
             overflow-x: hidden;
         }
 
+        /* Background Effects */
         .dot-bg {
             position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
             background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
@@ -135,38 +136,39 @@
 
     <div class="container">
         <header>
-            <h1>AETHER</h1>
+            <h1>Dasher's Hub</h1>
             <div class="search-container">
                 <input type="text" id="gameSearch" placeholder="Search games..." onkeyup="filterGames()">
             </div>
         </header>
 
-        <div class="game-grid" id="gameGrid"></div>
+        <div class="game-grid" id="gameGrid">
+            </div>
     </div>
 
     <script>
-        // Updated game list with specific image paths identified from your directory structure
         const games = [
-            [span_3](start_span){ id: '1', name: '2048', icon: 'meta/og_image.png' }, //[span_3](end_span)
-            [span_4](start_span){ id: '1v1space', name: '1v1.space', icon: 'splash.png' }, //[span_4](end_span)
-            [span_5](start_span){ id: '2048', name: '2048', icon: '2048.png' }, //[span_5](end_span)
-            [span_6](start_span){ id: '9007199254740992', name: '9007199254740992', icon: 'logo-4.png' }, //[span_6](end_span)
-            [span_7](start_span){ id: 'achievementunlocked', name: 'Achievement Unlocked', icon: 'achievementunlocked.png' }, //[span_7](end_span)
-            [span_8](start_span){ id: 'adrenalinechallenge', name: 'Adrenaline Challenge' }, // Defaults to adrenalinechallenge.jpg[span_8](end_span)
-            [span_9](start_span){ id: 'among-us', name: 'Among Us', icon: 'penumbra.png' }, //[span_9](end_span)
-            [span_10](start_span){ id: 'avalanche', name: 'Avalanche', icon: 'avalanche.png' }, //[span_10](end_span)
-            [span_11](start_span){ id: 'backrooms', name: 'Backrooms', icon: 'img/icon.png' }, //[span_11](end_span)
-            [span_12](start_span){ id: 'basketball-stars', name: 'Basketball Stars', icon: 'assets/images/basketball-stars.png' }, //[span_12](end_span)
-            [span_13](start_span){ id: 'battleforgondor', name: 'Battle for Gondor' }, // Defaults to battleforgondor.jpg[span_13](end_span)
-            [span_14](start_span){ id: 'bigredbutton', name: 'Big Red Button', icon: 'bigredbutton.png' }, //[span_14](end_span)
-            [span_15](start_span){ id: 'blackknight', name: 'Black Knight', icon: 'blackknight.png' }, //[span_15](end_span)
-            [span_16](start_span){ id: 'bloonstd', name: 'Bloons TD' }, // Defaults to bloonstd.jpg[span_16](end_span)
-            [span_17](start_span){ id: 'bloonstd2', name: 'Bloons TD 2', icon: 'bloonstd2.png' }, //[span_17](end_span)
-            [span_18](start_span){ id: 'bloxors', name: 'Bloxorz', icon: 'title.png' }, //[span_18](end_span)
-            [span_19](start_span){ id: 'boxhead2play', name: 'Boxhead 2Play' }, // Defaults to boxhead2play.jpg[span_19](end_span)
-            [span_20](start_span){ id: 'breakingthebank', name: 'Breaking the Bank', icon: 'breakingthebank.png' } //[span_20](end_span)
+            { id: '1', name: '2048' },
+            { id: '1v1space', name: '1v1.space' },
+            { id: '2048', name: '2048' },
+            { id: '9007199254740992', name: '9007199254740992' },
+            { id: 'achievementunlocked', name: 'Achievement Unlocked' },
+            { id: 'adrenalinechallenge', name: 'Adrenaline Challenge' },
+            { id: 'among-us', name: 'Among Us' },
+            { id: 'avalanche', name: 'Avalanche' },
+            { id: 'backrooms', name: 'Backrooms' },
+            { id: 'basketball-stars', name: 'Basketball Stars' },
+            { id: 'battleforgondor', name: 'Battle for Gondor' },
+            { id: 'bigredbutton', name: 'Big Red Button' },
+            { id: 'blackknight', name: 'Black Knight' },
+            { id: 'bloonstd', name: 'Bloons TD' },
+            { id: 'bloonstd2', name: 'Bloons TD 2' },
+            { id: 'bloxors', name: 'Bloxorz' },
+            { id: 'boxhead2play', name: 'Boxhead 2Play' },
+            { id: 'breakingthebank', name: 'Breaking the Bank' }
         ];
 
+        // Sort games by name
         games.sort((a, b) => a.name.localeCompare(b.name));
 
         const grid = document.getElementById('gameGrid');
@@ -177,9 +179,8 @@
                 const card = document.createElement('div');
                 card.className = 'game-card';
                 
-                // If a specific icon path is defined, use it; otherwise default to gameId.jpg
-                const iconFile = game.icon ? game.icon : `${game.id}.jpg`;
-                const iconPath = `./gameslist/${game.id}/${iconFile}`;
+                // Modified to look for .jpg for the logo and .html for the launch file 
+                const iconPath = `./gameslist/${game.id}/${game.id}.jpg`;
                 const gamePath = `./gameslist/${game.id}/index.html`;
 
                 card.innerHTML = `
