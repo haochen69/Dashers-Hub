@@ -3,175 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dasher's Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+    <title>AETHER | Game Hub</title>
     <style>
-        :root {
-            --bg: #0b0e14;
-            --surface: rgba(255, 255, 255, 0.04);
-            --border: rgba(255, 255, 255, 0.08);
-            --text-main: #ffffff;
-            --text-dim: #9aa0a6;
-        }
-
-        body, html {
-            margin: 0; padding: 0;
-            background-color: var(--bg);
-            color: var(--text-main);
-            font-family: 'Lexend', sans-serif;
+        body {
+            margin: 0;
+            background-color: #0f0f12;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
         }
 
-        /* Diagonal Moving Dots */
-        .dot-bg {
-            position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
-            background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1.5px, transparent 1.5px);
-            background-size: 50px 50px;
-            animation: diagonalMove 40s linear infinite;
-            z-index: -1;
-        }
-
-        @keyframes diagonalMove {
-            from { transform: translate(0, 0); }
-            to { transform: translate(50px, 50px); }
-        }
-
+        /* Glassmorphic Navbar */
         nav {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 18px 8%; border-bottom: 1px solid var(--border);
-            backdrop-filter: blur(20px); background: rgba(11, 14, 20, 0.8);
-            position: sticky; top: 0; z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            padding: 1.5rem 5%;
+            background: rgba(15, 15, 18, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        .logo { font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; gap: 12px; }
-
-        .container { max-width: 1200px; margin: 40px auto; padding: 0 40px; text-align: center; }
-
-        .search-area { margin-bottom: 50px; max-width: 550px; margin-inline: auto; }
-
-        .search-area input {
-            width: 100%; padding: 15px 25px; border-radius: 50px;
-            border: 1px solid var(--border); background: var(--surface);
-            color: white; font-family: 'Lexend', sans-serif; outline: none;
-            transition: 0.3s; font-size: 1rem;
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #a855f7, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .search-area input:focus { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.08); }
+        /* Game Grid */
+        .container {
+            padding: 3rem 5%;
+        }
 
-        /* Bubbly Game Grid */
-        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
 
         .game-card {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 24px; padding: 12px; cursor: pointer;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-decoration: none; color: inherit;
-        }
-
-        .game-card:hover { transform: translateY(-8px); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
-
-        .thumb {
-            width: 100%; aspect-ratio: 1/1; background: #161b22;
-            border-radius: 18px; margin-bottom: 10px;
-            display: flex; align-items: center; justify-content: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
             overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
         }
 
-        .thumb img { width: 100%; height: 100%; object-fit: cover; }
-        .game-name { font-weight: 600; font-size: 0.85rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .game-card:hover {
+            transform: translateY(-5px);
+            border-color: #a855f7;
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2);
+        }
+
+        .game-img {
+            width: 100%;
+            height: 150px;
+            background: #1a1a20; /* Placeholder for images */
+            object-fit: cover;
+        }
+
+        .game-info {
+            padding: 12px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            outline: none;
+        }
     </style>
 </head>
 <body>
 
-    <div class="dot-bg"></div>
-
     <nav>
-        <div class="logo"><i class="fas fa-bolt"></i> DASHER'S HUB</div>
-        <div class="nav-links" style="color: var(--text-dim); font-size: 0.9rem;">
-            <span><i class="fas fa-gamepad"></i> Library</span>
-        </div>
+        <div class="logo">AETHER</div>
+        <div class="links">Settings | Proxy | Games</div>
     </nav>
 
     <div class="container">
-        <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 30px; letter-spacing: -1.5px;">Library</h1>
-        
-        <div class="search-area">
-            <input type="text" id="gameSearch" placeholder="Search 100+ games..." onkeyup="filterGames()">
+        <div class="search-container">
+            <input type="text" placeholder="Search for a game...">
         </div>
 
-        <div class="game-grid" id="gameGrid">
+        <div class="grid" id="game-grid">
+            <div class="game-card" onclick="loadGame('2048')">
+                <div class="game-img"></div>
+                <div class="game-info">2048</div>
             </div>
+            <div class="game-card" onclick="loadGame('retro-bowl')">
+                <div class="game-img"></div>
+                <div class="game-info">Retro Bowl</div>
+            </div>
+            <div class="game-card" onclick="loadGame('among-us')">
+                <div class="game-img"></div>
+                <div class="game-info">Among Us</div>
+            </div>
+        </div>
     </div>
 
+    <iframe id="game-frame" style="display:none; width:100%; height:100vh; border:none; position:fixed; top:0; left:0; z-index:999;"></iframe>
+
     <script>
-        // Full list from 3kh0 bitbucket projects
-        const games = [
-            { name: "1v1.lol", id: "1v1lol" }, { name: "1v1.space", id: "1v1space" }, { name: "2048", id: "2048" },
-            { name: "Among Us", id: "among-us" }, { name: "Basketball Stars", id: "basketball-stars" },
-            { name: "Bitplanes", id: "bitplanes" }, { name: "Bloons TD", id: "btd1" }, { name: "Bloons TD 2", id: "btd2" },
-            { name: "Bloxorz", id: "bloxors" }, { name: "Cookie Clicker", id: "cookie-clicker" },
-            { name: "Death Run 3D", id: "death-run-3d" }, { name: "Doge Miner", id: "dogeminer" },
-            { name: "Doodle Jump", id: "doodle-jump" }, { name: "Duck Life", id: "ducklife" },
-            { name: "Eaglercraft", id: "eaglercraft" }, { name: "Edge Not Found", id: "edge-not-found" },
-            { name: "Elastic Man", id: "elastic-man" }, { name: "Flappy Bird", id: "flappy-bird" },
-            { name: "Geometry Dash", id: "geometry-dash" }, { name: "Getaway Shootout", id: "getaway-shootout" },
-            { name: "Google Snake", id: "google-snake" }, { name: "Hextris", id: "hextris" },
-            { name: "Idle Breakout", id: "idle-breakout" }, { name: "Impossible Quiz", id: "impossible-quiz" },
-            { name: "Krunker", id: "krunker" }, { name: "Minecraft Classic", id: "minecraft-classic" },
-            { name: "MotoX3M", id: "motox3m" }, { name: "MotoX3M Pool", id: "motox3m-pool" },
-            { name: "MotoX3M Winter", id: "motox3m-winter" }, { name: "Paper.io 2", id: "paperio2" },
-            { name: "Retro Bowl", id: "retro-bowl" }, { name: "Rooftop Snipers", id: "rooftop-snipers" },
-            { name: "Slope", id: "slope" }, { name: "Smash Karts", id: "smash-karts" },
-            { name: "Super Mario 64", id: "sm64" }, { name: "Superhot", id: "superhot" },
-            { name: "Temple Run 2", id: "temple-run-2" }, { name: "There Is No Game", id: "there-is-no-game" },
-            { name: "Tunnel Rush", id: "tunnel-rush" }, { name: "Vex 3", id: "vex3" },
-            { name: "Vex 4", id: "vex4" }, { name: "Vex 5", id: "vex5" }, { name: "Vex 6", id: "vex6" },
-            { name: "Wolfenstein 3D", id: "wolfenstein-3d" }, { name: "World's Hardest Game", id: "whg1" }
-        ];
+        // MASTER DIRECTORY FROM YOUR FILE LIST
+        const AETHER_DIRECTORY = {
+            "1": "1/index.html",
+            "2048": "2048/index.html",
+            "1v1space": "1v1space/index.html",
+            "among-us": "among-us/index.html",
+            "backrooms": "backrooms/index.html",
+            "basketball-stars": "basketball-stars/index.html",
+            "retro-bowl": "retro-bowl/index.html",
+            "bloonstd": "bloonstd/index.html",
+            "bloxors": "bloxors/index.html",
+            "cookie-clicker": "cookie-clicker/index.html",
+            "the-worlds-hardest-game": "the-worlds-hardest-game/index.html"
+        };
 
-        // Adding remaining titles automatically to fill the grid
-        const extraTitles = ["Avalanche", "Backrooms", "Battle for Gondor", "Big Red Button", "Black Knight", "Box Head", "Breaking the Bank", "Big Tower Tiny Square", "Cannon Basketball 4", "Canyon Defense", "Cell Machine", "Champion Archer", "Chrome Dino", "circlO", "Connect 3", "CraftMine", "Creative Kill Chamber", "CS:GO Clicker", "Cut the Rope", "Cubefield", "Deal or No Deal", "Defend the Tank", "Double Wires", "Draw the Hill", "Endless War 3", "Evil Glitch", "Exo", "Factory Balls Forever", "Fake Virus", "Flash Tetris", "Gimme the Airpod", "Glass City", "Grind Craft", "Hacker Typer", "Hover Bot Arena", "Helicopter", "Hex Empire", "HexGL", "Idle Shark", "Interactive Buddy", "Just One Boss", "Kitten Cannon", "Learn To Fly", "Mario", "Matrix Rampage", "Minesweeper", "Mini-putt", "Missiles", "n-gon", "NS-Shaft", "Om Nom Bounce", "Pandemic 2", "Papa's Pizzaria", "Papery Planes", "Particle Clicker", "PolyBranch", "Push The Square", "Push Your Luck", "Rolly Vortex", "Sand Game", "Smoking Barrels", "Snowbattle", "Soilder Legend", "Solitaire", "Sort The Court", "Soundboard", "Stack", "Stick War", "Storm The House 2", "Swerve", "Tactical Assassin 2", "Tank Trouble 2", "Tanuki Sunset", "The Battle", "The Final Earth", "The Heist", "This Is The Only Level", "Toss The Turtle", "Tube Jumpers", "TV Static", "Wordle"];
-        
-        extraTitles.forEach(t => {
-            games.push({ name: t, id: t.toLowerCase().replace(/ /g, "-").replace(/'/g, "") });
-        });
-
-        const grid = document.getElementById('gameGrid');
-
-        function loadGames() {
-            grid.innerHTML = ''; 
-            games.forEach(game => {
-                const card = document.createElement('div');
-                card.className = 'game-card';
-                
-                // standard 3kh0 paths
-                const iconPath = `./gameslist/${game.id}/icon.png`;
-                const gamePath = `./gameslist/${game.id}/index.html`;
-
-                card.innerHTML = `
-                    <div class="thumb">
-                        <img src="${iconPath}" onerror="this.src='https://via.placeholder.com/150/161b22/ffffff?text=${game.name[0]}'">
-                    </div>
-                    <span class="game-name">${game.name}</span>
-                `;
-                
-                card.onclick = () => window.location.href = gamePath;
-                grid.appendChild(card);
-            });
-        }
-
-        function filterGames() {
-            let input = document.getElementById('gameSearch').value.toLowerCase();
-            let cards = document.getElementsByClassName('game-card');
-            for (let i = 0; i < cards.length; i++) {
-                let name = cards[i].querySelector('.game-name').innerText.toLowerCase();
-                cards[i].style.display = name.includes(input) ? "" : "none";
+        function loadGame(gameKey) {
+            const path = AETHER_DIRECTORY[gameKey];
+            const iframe = document.getElementById('game-frame');
+            
+            if (path) {
+                iframe.src = path;
+                iframe.style.display = "block";
+                // Optional: Add a back button or escape listener here
+            } else {
+                alert("Game folder not found: " + gameKey);
             }
         }
-
-        loadGames();
     </script>
 </body>
 </html>
