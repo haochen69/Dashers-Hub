@@ -5,94 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AETHER | Game Hub</title>
     <style>
-        body {
-            margin: 0;
-            background-color: #0f0f12;
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-        }
-
-        /* Glassmorphic Navbar */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            padding: 1.5rem 5%;
-            background: rgba(15, 15, 18, 0.8);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            background: linear-gradient(90deg, #a855f7, #6366f1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Game Grid */
-        .container {
-            padding: 3rem 5%;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .game-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .game-card:hover {
-            transform: translateY(-5px);
-            border-color: #a855f7;
-            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2);
-        }
-
-        .game-img {
-            width: 100%;
-            height: 150px;
-            background: #1a1a20; /* Placeholder for images */
-            object-fit: cover;
-        }
-
-        .game-info {
-            padding: 12px;
-            text-align: center;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        /* Search Bar */
-        .search-container {
-            margin-bottom: 2rem;
-            display: flex;
-            justify-content: center;
-        }
-
-        input {
-            width: 100%;
-            max-width: 500px;
-            padding: 12px 20px;
-            border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05);
-            color: white;
-            outline: none;
-        }
+        body { margin: 0; background-color: #0f0f12; color: #ffffff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        nav { display: flex; justify-content: space-between; padding: 1.5rem 5%; background: rgba(15, 15, 18, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; background: linear-gradient(90deg, #a855f7, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .container { padding: 3rem 5%; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+        .game-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; overflow: hidden; transition: all 0.3s ease; cursor: pointer; text-align: center; }
+        .game-card:hover { transform: translateY(-5px); border-color: #a855f7; box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2); }
+        .game-img { width: 100%; height: 120px; background: #1a1a20; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+        .game-info { padding: 12px; font-size: 0.85rem; font-weight: 500; text-transform: capitalize; }
+        .search-container { margin-bottom: 2rem; display: flex; justify-content: center; }
+        input { width: 100%; max-width: 500px; padding: 12px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white; outline: none; }
+        #game-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #000; z-index: 1000; }
+        #game-frame { width: 100%; height: 100%; border: none; }
+        .back-btn { position: absolute; top: 20px; left: 20px; padding: 10px 20px; background: #a855f7; border: none; color: white; border-radius: 5px; cursor: pointer; z-index: 1001; }
     </style>
 </head>
 <body>
@@ -102,57 +28,77 @@
         <div class="links">Settings | Proxy | Games</div>
     </nav>
 
-    <div class="container">
+    <div class="container" id="hub-view">
         <div class="search-container">
-            <input type="text" placeholder="Search for a game...">
+            <input type="text" id="search" placeholder="Search through your library..." oninput="filterGames()">
         </div>
-
-        <div class="grid" id="game-grid">
-            <div class="game-card" onclick="loadGame('2048')">
-                <div class="game-img"></div>
-                <div class="game-info">2048</div>
-            </div>
-            <div class="game-card" onclick="loadGame('retro-bowl')">
-                <div class="game-img"></div>
-                <div class="game-info">Retro Bowl</div>
-            </div>
-            <div class="game-card" onclick="loadGame('among-us')">
-                <div class="game-img"></div>
-                <div class="game-info">Among Us</div>
-            </div>
-        </div>
+        <div class="grid" id="game-grid"></div>
     </div>
 
-    <iframe id="game-frame" style="display:none; width:100%; height:100vh; border:none; position:fixed; top:0; left:0; z-index:999;"></iframe>
+    <div id="game-view">
+        <button class="back-btn" onclick="closeGame()">← Back to Hub</button>
+        <iframe id="game-frame"></iframe>
+    </div>
 
     <script>
-        // MASTER DIRECTORY FROM YOUR FILE LIST
-        const AETHER_DIRECTORY = {
-            "1": "1/index.html",
-            "2048": "2048/index.html",
-            "1v1space": "1v1space/index.html",
-            "among-us": "among-us/index.html",
-            "backrooms": "backrooms/index.html",
-            "basketball-stars": "basketball-stars/index.html",
-            "retro-bowl": "retro-bowl/index.html",
-            "bloonstd": "bloonstd/index.html",
-            "bloxors": "bloxors/index.html",
-            "cookie-clicker": "cookie-clicker/index.html",
-            "the-worlds-hardest-game": "the-worlds-hardest-game/index.html"
-        };
+        // Full Directory generated from your files [cite: 158-273]
+        const games = [
+            "1", "1v1space", "2048", "9007199254740992", "achievementunlocked", "adrenalinechallenge", 
+            "among-us", "avalanche", "backrooms", "basketball-stars", "battleforgondor", "bigredbutton", 
+            "blackknight", "bloonstd", "bloonstd2", "bloxors", "boxhead2play", "breakingthebank", 
+            "btts", "cannon-basketball-4", "canyondefense", "cell-machine", "championarcher", 
+            "chrome-dino", "circlo", "connect3", "cookie-clicker", "crossyroad", "ctr", "cube-field", 
+            "cuttherope", "dead-zealot", "deathrun", "deep-io", "defendthecastle", "dino-t-rex", 
+            "doge-2048", "doodle-jump", "doom", "dragonfist", "draw-play", "drift-hunters", 
+            "drive-mad", "ducklife1", "ducklife2", "ducklife3", "ducklife4", "edge-not-found", 
+            "electricman2", "evil-glitch", "factory-balls-forever", "fancy-pants", "fancy-pants-2", 
+            "fancy-pants-3", "feign", "fireboy-watergirl", "fireboy-watergirl-2", "fireboy-watergirl-3", 
+            "flappy-bird", "friday-night-funkin", "get-on-top", "geometry-dash", "google-snake", 
+            "grindcraft", "gunmayhem", "gunmayhem2", "happy-wheels", "impossible-quiz", "jetpack-joyride", 
+            "mario", "minecraft", "minecraft-classic", "motox3m", "papas-pizzeria", "papas-freezeria", 
+            "pixel-combat", "pokemon-emerald", "precision-client", "retro-bowl", "slope", "snow-rider-3d", 
+            "soccer-random", "stickman-hook", "subway-surfers", "temple-run-2", "territorial-io", 
+            "the-heist", "the-worlds-hardest-game", "the-worlds-hardest-game-2", "vex-3", "vex-4", 
+            "vex-5", "vex-6", "vex-7", "wordle"
+        ];
 
-        function loadGame(gameKey) {
-            const path = AETHER_DIRECTORY[gameKey];
-            const iframe = document.getElementById('game-frame');
-            
-            if (path) {
-                iframe.src = path;
-                iframe.style.display = "block";
-                // Optional: Add a back button or escape listener here
-            } else {
-                alert("Game folder not found: " + gameKey);
-            }
+        const grid = document.getElementById('game-grid');
+
+        function init() {
+            games.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.onclick = () => loadGame(game);
+                card.innerHTML = `
+                    <div class="game-img">🎮</div>
+                    <div class="game-info">${game.replace(/-/g, ' ')}</div>
+                `;
+                grid.appendChild(card);
+            });
         }
+
+        function loadGame(folder) {
+            document.getElementById('hub-view').style.display = 'none';
+            document.getElementById('game-view').style.display = 'block';
+            document.getElementById('game-frame').src = folder + "/index.html"; // Matches your structure [cite: 163, 172, 182]
+        }
+
+        function closeGame() {
+            document.getElementById('hub-view').style.display = 'block';
+            document.getElementById('game-view').style.display = 'none';
+            document.getElementById('game-frame').src = "";
+        }
+
+        function filterGames() {
+            const query = document.getElementById('search').value.toLowerCase();
+            const cards = document.querySelectorAll('.game-card');
+            cards.forEach(card => {
+                const name = card.innerText.toLowerCase();
+                card.style.display = name.includes(query) ? 'block' : 'none';
+            });
+        }
+
+        init();
     </script>
 </body>
 </html>
