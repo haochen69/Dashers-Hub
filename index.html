@@ -3,221 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dasher's Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Dashers Hub</title>
     
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/en/3/35/Geometry_Dash_Logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0b0e14;
-            --surface: rgba(255, 255, 255, 0.04);
-            --border: rgba(255, 255, 255, 0.08);
-            --text-main: #ffffff;
-            --text-dim: #9aa0a6;
+            --primary: #00d2ff;
+            --secondary: #92fe9d;
+            --bg: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --grid-color: rgba(0, 210, 255, 0.08);
         }
 
-        body, html {
-            margin: 0; padding: 0;
-            background-color: var(--bg);
-            color: var(--text-main);
-            font-family: 'Lexend', sans-serif;
-            overflow-x: hidden;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { background-color: var(--bg); color: white; min-height: 100vh; overflow-x: hidden; }
+
+        #grid-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 45px 45px;
+            mask-image: radial-gradient(circle at var(--x, 50%) var(--y, 50%), black 0%, transparent 85%);
+            -webkit-mask-image: radial-gradient(circle at var(--x, 50%) var(--y, 50%), black 0%, transparent 85%);
         }
 
-        /* Diagonal Moving Dots */
-        .dot-bg {
-            position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
-            background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1.5px, transparent 1.5px);
-            background-size: 50px 50px;
-            animation: diagonalMove 40s linear infinite;
-            z-index: -1;
+        /* Nav & Logo Shader */
+        nav { position: absolute; top: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 2rem 5%; z-index: 10; }
+        .logo { 
+            font-size: 1.8rem; font-weight: 900; 
+            background: linear-gradient(45deg, var(--primary), var(--secondary)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        .nav-btn { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: 700; transition: 0.3s; }
+        .nav-btn:hover { background: var(--primary); box-shadow: 0 0 20px rgba(0, 210, 255, 0.4); transform: translateY(-2px); }
+
+        /* Navigation Sections */
+        #landing-page {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
 
-        @keyframes diagonalMove {
-            from { transform: translate(0, 0); }
-            to { transform: translate(50px, 50px); }
+        #games-page {
+            display: none;
+            opacity: 0;
+            padding: 120px 5% 40px;
+            max-width: 1400px;
+            margin: auto;
+            transition: opacity 0.6s ease;
         }
 
-        nav {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 18px 8%; border-bottom: 1px solid var(--border);
-            backdrop-filter: blur(20px); background: rgba(11, 14, 20, 0.8);
-            position: sticky; top: 0; z-index: 100;
+        #game-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; background: black; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        h1 { font-size: 5.5rem; font-weight: 900; letter-spacing: -3px; margin-bottom: 10px; animation: bounce 3s ease-in-out infinite; }
+        
+        /* Spacing Fixes */
+        #subtitle-container { height: 0px; margin-bottom: 70px; } 
+        #subtitle { font-size: 1.4rem; font-weight: 700; color: var(--secondary); transition: opacity 0.8s ease; opacity: 1; }
+        
+        .enter-btn {
+            padding: 22px 60px;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: white;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.3);
+        }
+        .enter-btn:hover { transform: scale(1.1) translateY(-5px); }
+
+        /* Game Grid */
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
+        .game-card { background: var(--card-bg); border-radius: 24px; padding: 35px 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); transition: 0.4s; cursor: pointer; }
+        .game-card:hover { transform: translateY(-12px); border-color: var(--primary); }
+
+        /* PAUSE MENU WITH ANIMATION */
+        #pause-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0);
+            backdrop-filter: blur(0px);
+            z-index: 1000;
+            flex-direction: column; justify-content: center; align-items: center;
+            transition: background 0.4s ease, backdrop-filter 0.4s ease;
         }
 
-        .logo { font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; gap: 12px; }
-
-        .container { max-width: 1200px; margin: 40px auto; padding: 0 40px; text-align: center; }
-
-        .search-area { margin-bottom: 50px; max-width: 550px; margin-inline: auto; }
-
-        .search-area input {
-            width: 100%; padding: 15px 25px; border-radius: 50px;
-            border: 1px solid var(--border); background: var(--surface);
-            color: white; font-family: 'Lexend', sans-serif; outline: none;
-            transition: 0.3s; font-size: 1rem;
+        .pause-content {
+            transform: scale(0.8);
+            opacity: 0;
+            text-align: center;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
         }
 
-        .search-area input:focus { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.08); }
-
-        /* Bubbly Game Grid */
-        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
-
-        .game-card {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 24px; padding: 12px; cursor: pointer;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-decoration: none; color: inherit;
+        #pause-overlay.active {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
         }
 
-        .game-card:hover { transform: translateY(-8px); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
-
-        .thumb {
-            width: 100%; aspect-ratio: 1/1; background: #161b22;
-            border-radius: 18px; margin-bottom: 10px;
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden;
+        #pause-overlay.active .pause-content {
+            transform: scale(1);
+            opacity: 1;
         }
 
-        .thumb img { width: 100%; height: 100%; object-fit: cover; }
-        .game-name { font-weight: 600; font-size: 0.85rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .pause-btn { 
+            width: 280px; margin: 12px; padding: 18px; 
+            border-radius: 50px; border: none; font-weight: 900; cursor: pointer;
+            font-size: 1.2rem; transition: 0.3s;
+        }
+        .res-btn { background: var(--primary); color: white; }
+        .ext-btn { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+        .ext-btn:hover { background: #ff4b2b; }
+
+        .hidden { display: none !important; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
     </style>
 </head>
 <body>
 
-    <div class="dot-bg"></div>
+    <div id="grid-bg"></div>
 
-    <nav>
-        <div class="logo"><i class="fas fa-bolt"></i> DASHER'S HUB</div>
-        <div class="nav-links" style="color: var(--text-dim); font-size: 0.9rem;">
-            <span><i class="fas fa-gamepad"></i> Library</span>
+    <div id="pause-overlay">
+        <div class="pause-content">
+            <h2 style="font-size: 3.5rem; margin-bottom: 30px;">Paused</h2>
+            <button class="pause-btn res-btn" onclick="togglePause()">Resume Game</button>
+            <button class="pause-btn ext-btn" onclick="closeGame()">Exit to Hub</button>
         </div>
-    </nav>
-
-    <div class="container">
-        <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 30px; letter-spacing: -1.5px;">Library</h1>
-        
-        <div class="search-area">
-            <input type="text" id="gameSearch" placeholder="Search 100+ games..." onkeyup="filterGames()">
-        </div>
-
-        <div class="game-grid" id="gameGrid">
-            </div>
     </div>
 
-<script>
-    const gameData = [
-        { name: "2048 (Original)", id: "1", icon: "favicon.ico" },
-        { name: "1v1.LOL", id: "1v1space", icon: "splash.png" },
-        { name: "2048 (Enhanced)", id: "2048", icon: "2048.png" },
-        { name: "9007199254740992", id: "9007199254740992", icon: "logo-4.png" },
-        { name: "Achievement Unlocked", id: "achievementunlocked", icon: "achievementunlocked.png" },
-        { name: "Adrenaline Challenge", id: "adrenalinechallenge", icon: "adrenalinechallenge.jpg" },
-        { name: "Among Us", id: "among-us", icon: "penumbra.png" },
-        { name: "Avalanche", id: "avalanche", icon: "avalanche.png" },
-        { name: "Backrooms", id: "backrooms", icon: "img/icon.png" },
-        { name: "Basketball Stars", id: "basketball-stars", icon: "assets/images/basketball-stars.png" },
-        { name: "Battle for Gondor", id: "battleforgondor", icon: "battleforgondor.jpg" },
-        { name: "Big Red Button", id: "bigredbutton", icon: "bigredbutton.png" },
-        { name: "Black Knight", id: "blackknight", icon: "blackknight.png" },
-        { name: "Bloons TD", id: "bloonstd", icon: "bloonstd.jpg" },
-        { name: "Bloons TD 2", id: "bloonstd2", icon: "bloonstd2.png" },
-        { name: "Bloxorz", id: "bloxors", icon: "block.png" },
-        { name: "Boxhead 2Play", id: "boxhead2play", icon: "boxhead2play.jpg" },
-        { name: "Breaking the Bank", id: "breakingthebank", icon: "breakingthebank.png" },
-        { name: "BTTS", id: "btts", icon: "icon-256.png" },
-        { name: "Cannon Basketball 4", id: "cannon-basketball-4", icon: "img/splash.png" },
-        { name: "Canyon Defense", id: "canyondefense", icon: "canyondefense.png" },
-        { name: "Cell Machine", id: "cell-machine", icon: "img/icon.png" },
-        { name: "Champion Archer", id: "championarcher", icon: "championarcher.png" },
-        { name: "Chrome Dino", id: "chrome-dino", icon: "icons/icon-256.png" },
-        { name: "Circlo", id: "circlo", icon: "img/icon.png" },
-        { name: "Connect 3", id: "connect3", icon: "connect3.png" },
-        { name: "Cookie Clicker", id: "cookie-clicker", icon: "cookie1.jpeg" },
-        { name: "Duck Life 1", id: "ducklife1", icon: "ducklife.png" },
-        { name: "Duck Life 2", id: "ducklife2", icon: "ducklife2.png" },
-        { name: "Duck Life 3", id: "ducklife3", icon: "duck.png" },
-        { name: "Duck Life 4", id: "ducklife4", icon: "icon.png" },
-        { name: "Edge Not Found", id: "edge-not-found", icon: "favicon.ico" },
-        { name: "Elastic Man", id: "elasticman", icon: "elasticman.jpg" },
-        { name: "Evo World", id: "evoworld", icon: "favicon.ico" },
-        { name: "Fancy Pants 1", id: "fancypants", icon: "fancypants.jpg" },
-        { name: "Fancy Pants 2", id: "fancypants2", icon: "fancypants2.jpg" },
-        { name: "Fancy Pants 3", id: "fancypants3", icon: "fancypants3.jpg" },
-        { name: "Fireboy and Watergirl", id: "fireboy-and-watergirl", icon: "favicon.ico" },
-        { name: "Flappy Bird", id: "flappy-bird", icon: "favicon.ico" },
-        { name: "Friday Night Funkin", id: "fnf", icon: "favicon.ico" },
-        { name: "Geometry Dash", id: "geometry-dash", icon: "favicon.ico" },
-        { name: "Get On Top", id: "getontop", icon: "getontop.png" },
-        { name: "Happy Wheels", id: "happywheels", icon: "favicon.ico" },
-        { name: "Hex Empire", id: "hex-empire", icon: "hexempire.jpg" },
-        { name: "HexGL", id: "HexGL", icon: "icon_256.png" },
-        { name: "Hextris", id: "hextris", icon: "favicon.ico" },
-        { name: "Idle Breakout", id: "idle-breakout", icon: "img/logo.png" },
-        { name: "Impossible Quiz", id: "impossiblequiz", icon: "impossiblequiz.png" },
-        { name: "Jetpack Joyride", id: "jetpack-joyride", icon: "favicon.ico" },
-        { name: "Madalin Stunt Cars 2", id: "madalin-stunt-cars-2", icon: "favicon.ico" },
-        { name: "Matrix Rampage", id: "matrixrampage", icon: "matrixrampage.jpg" },
-        { name: "Meme 2048", id: "meme2048", icon: "favicon.ico" },
-        { name: "Moto X3M", id: "motox3m", icon: "favicon.ico" },
-        { name: "N-Gon", id: "n-gon", icon: "bot.png" },
-        { name: "Paper.io 2", id: "paper-io-2", icon: "favicon.ico" },
-        { name: "Portal Flash", id: "portalflash", icon: "portaltheflashversion.jpg" },
-        { name: "Precision Client (MC)", id: "precision-client", icon: "logo.png" },
-        { name: "Push the Square", id: "push-the-square", icon: "icon.png" },
-        { name: "Riddle School", id: "riddleschool", icon: "riddleschool.png" },
-        { name: "Slope", id: "slope", icon: "favicon.ico" },
-        { name: "Smash Karts", id: "smashkarts", icon: "images/smashkarts.png" },
-        { name: "Snow Battle", id: "snowbattle", icon: "img/logo.png" },
-        { name: "Soldier Legend", id: "soldier-legend", icon: "favicon.ico" },
-        { name: "Stickman Hook", id: "stickman-hook", icon: "favicon.ico" },
-        { name: "Subway Surfers", id: "subway-surfers", icon: "favicon.ico" },
-        { name: "Super Mario 64", id: "sm64", icon: "logo.png" },
-        { name: "Tunnel Rush", id: "tunnel-rush", icon: "favicon.ico" },
-        { name: "Vex 3", id: "vex3", icon: "vex3.png" },
-        { name: "Vex 4", id: "vex4", icon: "vex4.png" },
-        { name: "Vex 5", id: "vex5", icon: "vex5.png" },
-        { name: "Vex 6", id: "vex6", icon: "vex6.png" },
-        { name: "Vex 7", id: "vex7", icon: "vex7.png" },
-        { name: "Wolfenstein 3D", id: "wolf3d", icon: "img/logo.png" },
-        { name: "Wordle", id: "wordle", icon: "favicon.ico" },
-        { name: "Worlds Hardest Game", id: "the-worlds-hardest-game", icon: "the-worlds-hardest-game.png" },
-        { name: "You Are Bezos", id: "you-are-bezos", icon: "favicon.ico" }
-    ];
+    <section id="landing-page">
+        <nav>
+            <div class="logo">DASHERS HUB 🧱</div>
+            <a href="https://discord.com/invite/qe7YrABHdr" target="_blank" class="nav-btn">Discord</a>
+        </nav>
+        <h1>Dashers Network</h1>
+        <div id="subtitle-container">
+            <div id="subtitle">i cant decide, dashers network or dashers hub?</div>
+        </div>
+        <button class="enter-btn" onclick="openHub()">Library</button>
+    </section>
 
-    const grid = document.getElementById('gameGrid');
+    <section id="games-page">
+        <div style="margin-bottom: 50px;">
+            <span style="color:var(--primary); cursor:pointer; font-weight:700;" onclick="closeHub()">← Back to Home</span>
+            <h2 style="font-size: 2.5rem; font-weight: 900; margin-top:10px;">Games Area</h2>
+        </div>
+        <div class="grid-container" id="gameGrid"></div>
+    </section>
 
-    function loadGames() {
-        grid.innerHTML = ''; 
-        gameData.forEach(game => {
+    <div id="game-view">
+        <iframe id="game-frame" src=""></iframe>
+    </div>
+
+    <script>
+        let isPlaying = false;
+        let isPaused = false;
+
+        function openHub() {
+            const lp = document.getElementById('landing-page');
+            const gp = document.getElementById('games-page');
+            lp.style.opacity = '0';
+            lp.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                lp.classList.add('hidden');
+                gp.style.display = 'block';
+                setTimeout(() => gp.style.opacity = '1', 50);
+            }, 600);
+        }
+
+        function closeHub() {
+            const lp = document.getElementById('landing-page');
+            const gp = document.getElementById('games-page');
+            gp.style.opacity = '0';
+            setTimeout(() => {
+                gp.style.display = 'none';
+                lp.classList.remove('hidden');
+                setTimeout(() => {
+                    lp.style.opacity = '1';
+                    lp.style.transform = 'scale(1)';
+                }, 50);
+            }, 600);
+        }
+
+        function launchGame(url) {
+            isPlaying = true;
+            const view = document.getElementById('game-view');
+            const frame = document.getElementById('game-frame');
+            frame.src = url;
+            view.style.display = 'block';
+            window.focus();
+        }
+
+        function closeGame() {
+            if(isPaused) togglePause();
+            isPlaying = false;
+            document.getElementById('game-view').style.display = 'none';
+            document.getElementById('game-frame').src = "";
+        }
+
+        // PAUSE LOGIC WITH ANIMATION CLASSES
+        function togglePause() {
+            if (!isPlaying) return;
+            const menu = document.getElementById('pause-overlay');
+            isPaused = !isPaused;
+            
+            if (isPaused) {
+                menu.style.display = 'flex';
+                setTimeout(() => menu.classList.add('active'), 10);
+            } else {
+                menu.classList.remove('active');
+                setTimeout(() => menu.style.display = 'none', 400);
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === "Escape") togglePause();
+        });
+
+        // SUBTITLE
+        const phrases = ["i cant decide, dashers network or dashers hub?", "earth finna be destroyed in 5 billion years", "join the discord!", "penalty is the goat (and birdcat and virgo too pls dont hurt me)"];
+        let pIndex = 0;
+        setInterval(() => {
+            const s = document.getElementById('subtitle');
+            s.style.opacity = 0;
+            setTimeout(() => {
+                pIndex = (pIndex + 1) % phrases.length;
+                s.innerText = phrases[pIndex];
+                s.style.opacity = 1;
+            }, 800);
+        }, 4500);
+
+        document.addEventListener('mousemove', e => {
+            document.getElementById('grid-bg').style.setProperty('--x', e.clientX + 'px');
+            document.getElementById('grid-bg').style.setProperty('--y', e.clientY + 'px');
+        });
+
+        // GAME LIST
+        const games = [
+            { name: "2048", path: "gameslist/1/index.html", icon: "🔢" },
+            { name: "1v1 Space", path: "gameslist/1v1space/index.html", icon: "🚀" },
+            { name: "Among Us", path: "gameslist/among-us/index.html", icon: "🎒" },
+            { name: "Retro Bowl", path: "gameslist/retro-bowl/index.html", icon: "🏈" },
+            { name: "Slope", path: "gameslist/slope/index.html", icon: "📉" }
+        ];
+
+        const grid = document.getElementById('gameGrid');
+        games.forEach(game => {
             const card = document.createElement('div');
             card.className = 'game-card';
-            
-            const iconPath = `./gameslist/${game.id}/${game.icon}`;
-            const gamePath = `./gameslist/${game.id}/index.html`;
-
-            card.innerHTML = `
-                <div class="thumb">
-                    <img src="${iconPath}" onerror="this.src='https://via.placeholder.com/150/161b22/ffffff?text=${game.name[0]}'">
-                </div>
-                <span class="game-name">${game.name}</span>
-            `;
-            
-            card.onclick = () => window.location.href = gamePath;
+            card.onclick = () => launchGame(game.path);
+            card.innerHTML = `<span class="game-icon">${game.icon}</span><h3>${game.name}</h3>`;
             grid.appendChild(card);
         });
-    }
-
-    function filterGames() {
-        let input = document.getElementById('gameSearch').value.toLowerCase();
-        let cards = document.getElementsByClassName('game-card');
-        for (let i = 0; i < cards.length; i++) {
-            let name = cards[i].querySelector('.game-name').innerText.toLowerCase();
-            cards[i].style.display = name.includes(input) ? "" : "none";
-        }
-    }
-
-    loadGames();
-</script>
+    </script>
 </body>
 </html>
