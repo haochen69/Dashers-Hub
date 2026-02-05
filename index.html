@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashers Hub</title>
     
-    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/en/3/35/Geometry_Dash_Logo.png">
+    <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSulNP8K1R-lYG3fwuvsTLKUeB2g7i8pgrM-w&s">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -125,7 +125,7 @@
 
     <div id="save-notification">
         <strong id="notif-title" style="color: var(--primary); font-size: 1.1rem; margin-bottom: 5px;">Progress Saved</strong>
-        <p id="notif-desc" style="font-size: 0.9rem; opacity: 0.8;">Your game state is locked in.</p>
+        <p id="notif-desc" style="font-size: 0.9rem; opacity: 0.8;">Your game has been saved!</p>
     </div>
 
     <div id="pause-trigger" onclick="togglePause()">PAUSE GAME</div>
@@ -140,12 +140,12 @@
 
     <section id="landing-page">
         <nav>
-            <div class="logo">DASHERS.HUB 🐔</div>
+            <div class="logo">DASHERS HUB 🎉</div>
             <a href="https://discord.com/invite/qe7YrABHdr" target="_blank" class="nav-btn">Discord</a>
         </nav>
         <h1>Dashers Network</h1>
-        <div style="height:40px; margin-bottom:80px;">
-            <div id="subtitle" style="font-size: 1.4rem; font-weight:700; color:var(--secondary); transition: 0.8s ease;">dashers network or dashers hub?</div>
+        <div style="height:0px; margin-bottom:80px;">
+            <div id="subtitle" style="font-size: 1.4rem; font-weight:700; color:var(--secondary); transition: 0.8s ease;">i cant decide, dashers network or dashers hub?</div>
         </div>
         <button onclick="openHub()" style="padding:22px 60px; font-size:1.4rem; font-weight:900; background:linear-gradient(45deg, var(--primary), var(--secondary)); border:none; border-radius:100px; cursor:pointer; color:white; box-shadow: 0 10px 30px rgba(0, 210, 255, 0.2);">ENTER HUB</button>
     </section>
@@ -154,7 +154,7 @@
         <div style="margin-bottom: 40px; display: flex; justify-content: space-between; align-items: flex-end;">
             <div>
                 <span style="color:var(--primary); cursor:pointer; font-weight:700;" onclick="closeHub()">← Back to Home</span>
-                <h2 style="font-size: 2.5rem; font-weight: 900; margin-top:10px;">Games Area</h2>
+                <h2 style="font-size: 2.5rem; font-weight: 900; margin-top:10px;">Games</h2>
             </div>
         </div>
         <div class="grid-container" id="gameGrid"></div>
@@ -169,7 +169,7 @@
         let isPaused = false;
         let currentPendingGame = null;
 
-        const phrases = ["dashers network or dashers hub?", "the chicken is watching", "99% bypass rate", "powered by pure speed", "the hub of the future"];
+        const phrases = ["i cant decide, dashers network or dashers hub?", "the chickens are watching", "inspired by frost chicken", "honestly sushi is overrated its just rice and stuff", "penalty is the goat (and virgo and birdcat too pls dont hurt me)", "join our discord! we've got over 4 million links ready to be used"];
         let phraseIdx = 0;
         setInterval(() => {
             const sub = document.getElementById('subtitle');
