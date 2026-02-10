@@ -53,43 +53,36 @@
         #landing-page { height: 100vh; flex-direction: column; align-items: center; justify-content: center; text-align: center; display: flex; opacity: 1; transform: translateY(0); }
         #games-page, #settings-page { padding: 120px 5% 60px; max-width: 1400px; margin: auto; }
 
-        #save-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 15, 30, 0.9); backdrop-filter: blur(20px); z-index: 4000;
-            flex-direction: column; justify-content: center; align-items: center; text-align: center;
-            opacity: 0; transition: opacity 0.4s ease;
-        }
-        #save-modal.active { opacity: 1; display: flex; }
-        .modal-inner { transform: scale(0.8); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        #save-modal.active .modal-inner { transform: scale(1); }
-
-        #save-notification {
-            position: fixed; bottom: 30px; right: -400px; width: 320px;
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
-            border: 1px solid var(--primary); border-radius: 20px;
-            padding: 20px; z-index: 5000; display: flex; flex-direction: column;
-            transition: right 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        #save-notification.active { right: 30px; }
-
         #game-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; background: black; }
         iframe { width: 100%; height: 100%; border: none; }
 
+        /* ORIGINAL PAUSE ANIMATIONS */
         #pause-trigger {
             display: none; position: fixed; top: 0; left: 50%; transform: translateX(-50%);
             width: 180px; height: 40px; background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px); z-index: 2500; cursor: pointer;
             border: 1px solid rgba(255,255,255,0.2); border-top: none; border-radius: 0 0 20px 20px;
             align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 900;
-            color: white; transition: 0.3s;
+            color: white; animation: slideDown 0.5s ease;
         }
+        @keyframes slideDown { from { top: -50px; } to { top: 0; } }
 
         #pause-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px); z-index: 3000;
+            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(15px); z-index: 3000;
             flex-direction: column; justify-content: center; align-items: center;
+            animation: fadeIn 0.3s ease;
         }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* SEARCH BAR */
+        .search-container { position: relative; width: 300px; }
+        #gameSearch {
+            width: 100%; padding: 12px 25px; border-radius: 50px;
+            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);
+            color: white; font-weight: 600; outline: none; transition: 0.3s;
+        }
+        #gameSearch:focus { border-color: var(--primary); background: rgba(255,255,255,0.1); }
 
         .action-btn { width: 280px; margin: 12px; padding: 18px; border-radius: 50px; border: none; font-weight: 900; cursor: pointer; font-size: 1.2rem; transition: 0.3s; color: white; }
         .primary-btn { background: var(--primary); }
@@ -108,19 +101,6 @@
 
     <div id="grid-bg"></div>
     <canvas id="particle-canvas"></canvas>
-
-    <div id="save-modal">
-        <div class="modal-inner">
-            <h2 id="modal-title" style="font-size: 3rem; margin-bottom: 10px;">Continue?</h2>
-            <p id="modal-desc" style="font-size: 1.2rem; color: var(--secondary); margin-bottom: 30px;">Choose an action</p>
-            <div id="modal-actions"></div>
-        </div>
-    </div>
-
-    <div id="save-notification">
-        <strong id="notif-title" style="color: var(--primary); font-size: 1.1rem; margin-bottom: 5px;">Update</strong>
-        <p id="notif-desc" style="font-size: 0.9rem; opacity: 0.8;">Action completed.</p>
-    </div>
 
     <div id="pause-trigger" onclick="togglePause()">PAUSE GAME</div>
 
@@ -152,6 +132,9 @@
                 <span style="color:var(--primary); cursor:pointer; font-weight:700;" onclick="showPage('landing-page')">← Back to Home</span>
                 <h2 style="font-size: 2.5rem; font-weight: 900; margin-top:10px;">Games</h2>
             </div>
+            <div class="search-container">
+                <input type="text" id="gameSearch" placeholder="Search games..." oninput="filterGames()">
+            </div>
         </div>
         <div class="grid-container" id="gameGrid"></div>
     </section>
@@ -162,9 +145,9 @@
             <h2 style="font-size: 2.5rem; font-weight: 900; margin-top:10px;">Settings</h2>
         </div>
         <div style="background: var(--card-bg); padding: 40px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); max-width: 600px;">
-            <h3 style="margin-bottom: 15px;">Clear All Data</h3>
-            <p style="opacity: 0.7; margin-bottom: 30px;">This resets your game saves.</p>
-            <button class="action-btn danger-btn" onclick="confirmResetData()" style="width: 100%; margin: 0;">RESET ALL DATA</button>
+            <h3 style="margin-bottom: 15px;">Dashboard Settings</h3>
+            <p style="opacity: 0.7; margin-bottom: 30px;">Hub visual and performance options.</p>
+            <button class="action-btn danger-btn" onclick="alert('Settings Reset')" style="width: 100%; margin: 0;">RESET SETTINGS</button>
         </div>
     </section>
 
@@ -173,7 +156,7 @@
     </div>
 
     <script>
-        let isPlaying = false, isPaused = false, currentPendingGame = null;
+        let isPlaying = false, isPaused = false;
 
         function showPage(pageId) {
             const sections = document.querySelectorAll('.page-section');
@@ -196,7 +179,7 @@
             }, 50);
         }
 
-        const phrases = ["i cant decide, dashers network or dashers hub?", "the chickens are watching", "honestly sushi is overrated", "join our discord! we have 4 mil proxy links ready to be used", "penalty is the goat (and birdcat and virgo too pls dont hurt me)", "you should never argue with dumb people", "i wonder why no one argues with me", "we have game saves so we're special", "bro just play some games already", "we support the lbgtq (light blue greasy tender quesadillas)", "inspired by frosty chicken"];
+        const phrases = ["i cant decide, dashers network or dashers hub?", "the chickens are watching", "honestly sushi is overrated", "join our discord! we have 4 mil proxy links ready to be used", "penalty is the goat (and birdcat and virgo too pls dont hurt me)", "you should never argue with dumb people", "i wonder why no one argues with me", "we are special", "bro just play some games already", "we support the lbgtq (light blue greasy tender quesadillas)", "inspired by frosty chicken"];
         let phraseIdx = 0;
         setInterval(() => {
             const sub = document.getElementById('subtitle');
@@ -229,79 +212,31 @@
             }
         }
 
-        function launchGame(url, name) {
-            currentPendingGame = { url, name };
-            const hasPlayed = localStorage.getItem('played_' + name);
-            if (hasPlayed) {
-                showModal(`Continue ${name}?`, `Found existing save data in browser.`, [
-                    { text: "Resume", class: "primary-btn", action: () => startIframe(url) },
-                    { text: "Restart", class: "secondary-btn", action: () => startIframe(url, true) }
-                ]);
-            } else {
-                startIframe(url);
-            }
-        }
-
-        function startIframe(url, forceRestart = false) {
+        function launchGame(url) {
             isPlaying = true;
             document.getElementById('game-view').style.display = 'block';
             document.getElementById('pause-trigger').style.display = 'flex';
             const frame = document.getElementById('game-frame');
-            
-            if (forceRestart || frame.src === "") {
-                frame.src = url;
-            }
+            frame.src = url;
             frame.style.opacity = '1';
             frame.onload = () => frame.focus();
         }
 
         function closeGame() {
-            const gameName = currentPendingGame.name;
-            localStorage.setItem('played_' + gameName, 'true');
             isPlaying = false; isPaused = false;
             document.getElementById('pause-overlay').style.display = 'none';
             document.getElementById('game-view').style.display = 'none';
             document.getElementById('pause-trigger').style.display = 'none';
             document.getElementById('game-frame').src = ""; 
-            showNotification(`${gameName} saved!`);
         }
 
-        function confirmResetData() {
-            showModal("Erase All Data?", "This will clear your hub history.", [
-                { text: "YES, ERASE", class: "danger-btn", action: () => {
-                    localStorage.clear();
-                    showNotification("All data cleared.");
-                }},
-                { text: "CANCEL", class: "secondary-btn", action: () => {} }
-            ]);
-        }
-
-        function showModal(title, desc, buttons) {
-            const modal = document.getElementById('save-modal');
-            const actions = document.getElementById('modal-actions');
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-desc').innerText = desc;
-            actions.innerHTML = "";
-            buttons.forEach(btn => {
-                const b = document.createElement('button');
-                b.className = `action-btn ${btn.class}`;
-                b.innerText = btn.text;
-                b.onclick = () => { 
-                    modal.classList.remove('active');
-                    setTimeout(() => { modal.style.display = 'none'; }, 400);
-                    btn.action(); 
-                };
-                actions.appendChild(b);
+        function filterGames() {
+            const query = document.getElementById('gameSearch').value.toLowerCase();
+            const cards = document.querySelectorAll('.game-card');
+            cards.forEach(card => {
+                const name = card.querySelector('h3').innerText.toLowerCase();
+                card.style.display = name.includes(query) ? 'block' : 'none';
             });
-            modal.style.display = 'flex';
-            setTimeout(() => { modal.classList.add('active'); }, 10);
-        }
-
-        function showNotification(msg) {
-            const notif = document.getElementById('save-notification');
-            document.getElementById('notif-desc').innerText = msg;
-            notif.classList.add('active');
-            setTimeout(() => notif.classList.remove('active'), 3000);
         }
 
         const canvas = document.getElementById('particle-canvas'), ctx = canvas.getContext('2d');
@@ -321,16 +256,128 @@
         const games = [
             { name: "2048", path: "./gameslist/1/index.html", icon: "🔢" },
             { name: "1v1 Space", path: "./gameslist/1v1space/index.html", icon: "🚀" },
+            { name: "2048 (Alternate)", path: "./gameslist/2048/index.html", icon: "🔢" },
+            { name: "9007199254740992", path: "./gameslist/9007199254740992/index.html", icon: "🔢" },
+            { name: "Achievement Unlocked", path: "./gameslist/achievementunlocked/index.html", icon: "🏆" },
+            { name: "Adrenaline Challenge", path: "./gameslist/adrenalinechallenge/index.html", icon: "🏍️" },
             { name: "Among Us", path: "./gameslist/among-us/index.html", icon: "🎒" },
+            { name: "Avalanche", path: "./gameslist/avalanche/index.html", icon: "❄️" },
+            { name: "Backrooms", path: "./gameslist/backrooms/index.html", icon: "🚪" },
+            { name: "Basketball Stars", path: "./gameslist/basketball-stars/index.html", icon: "🏀" },
+            { name: "Battle for Gondor", path: "./gameslist/battleforgondor/index.html", icon: "⚔️" },
+            { name: "Big Red Button", path: "./gameslist/bigredbutton/index.html", icon: "🔴" },
+            { name: "Black Knight", path: "./gameslist/blackknight/index.html", icon: "🛡️" },
+            { name: "Bloons TD", path: "./gameslist/bloonstd/index.html", icon: "🎈" },
+            { name: "Bloons TD 2", path: "./gameslist/bloonstd2/index.html", icon: "🎈" },
+            { name: "Bloxors", path: "./gameslist/bloxors/index.html", icon: "🧱" },
+            { name: "Boxhead 2Play", path: "./gameslist/boxhead2play/index.html", icon: "📦" },
+            { name: "Breaking the Bank", path: "./gameslist/breakingthebank/index.html", icon: "💰" },
+            { name: "BTTS", path: "./gameslist/btts/index.html", icon: "🏃" },
+            { name: "Cannon Basketball 4", path: "./gameslist/cannon-basketball-4/index.html", icon: "🏀" },
+            { name: "Canyon Defense", path: "./gameslist/canyondefense/index.html", icon: "🏜️" },
+            { name: "Cell Machine", path: "./gameslist/cell-machine/index.html", icon: "⚙️" },
+            { name: "Champion Archer", path: "./gameslist/championarcher/index.html", icon: "🏹" },
+            { name: "Chrome Dino", path: "./gameslist/chrome-dino/index.html", icon: "🦖" },
+            { name: "Circlo", path: "./gameslist/circlo/index.html", icon: "⭕" },
+            { name: "Connect 3", path: "./gameslist/connect3/index.html", icon: "⚪" },
+            { name: "Cookie Clicker", path: "./gameslist/cookie-clicker/index.html", icon: "🍪" },
+            { name: "Creative Kill Chamber", path: "./gameslist/creativekillchamber/index.html", icon: "🔫" },
+            { name: "Crossy Road", path: "./gameslist/crossyroad/index.html", icon: "🐔" },
+            { name: "CSGO Clicker", path: "./gameslist/csgo-clicker/index.html", icon: "🖱️" },
+            { name: "Cubefield", path: "./gameslist/cubefield/index.html", icon: "🟦" },
+            { name: "Cut The Rope", path: "./gameslist/cut-the-rope/index.html", icon: "🍬" },
+            { name: "Cut The Rope 2", path: "./gameslist/cut-the-rope-2/index.html", icon: "🍬" },
+            { name: "Cut The Rope Experiments", path: "./gameslist/cut-the-rope-experiments/index.html", icon: "🍬" },
+            { name: "Cut The Rope Magic", path: "./gameslist/cut-the-rope-magic/index.html", icon: "🍬" },
+            { name: "Cut The Rope Time Travel", path: "./gameslist/cut-the-rope-time-travel/index.html", icon: "🍬" },
+            { name: "Doge Miner", path: "./gameslist/dogeminer/index.html", icon: "🐕" },
+            { name: "Doodle Jump", path: "./gameslist/doodle-jump/index.html", icon: "🦎" },
+            { name: "Drift Hunters", path: "./gameslist/drift-hunters/index.html", icon: "🏎️" },
+            { name: "Duck Life", path: "./gameslist/ducklife1/index.html", icon: "🦆" },
+            { name: "Duck Life 2", path: "./gameslist/ducklife2/index.html", icon: "🦆" },
+            { name: "Duck Life 3", path: "./gameslist/ducklife3/index.html", icon: "🦆" },
+            { name: "Duck Life 4", path: "./gameslist/ducklife4/index.html", icon: "🦆" },
+            { name: "Edge Not Found", path: "./gameslist/edgenotfound/index.html", icon: "🌐" },
+            { name: "Evil Glitch", path: "./gameslist/evil-glitch/index.html", icon: "👾" },
+            { name: "Factory Balls Forever", path: "./gameslist/factoryballsforever/index.html", icon: "🎱" },
+            { name: "Fancy Pants Adventure", path: "./gameslist/fancypantsadventure/index.html", icon: "👖" },
+            { name: "Friday Night Funkin'", path: "./gameslist/fridaynightfunkin/index.html", icon: "🎤" },
             { name: "Geometry Dash", path: "./gameslist/geometry-dash/index.html", icon: "⏹️" },
-            { name: "Slope", path: "./gameslist/slope/index.html", icon: "📉" }
+            { name: "Get On Top", path: "./gameslist/getontop/index.html", icon: "🤼" },
+            { name: "Google Snake", path: "./gameslist/google-snake/index.html", icon: "🐍" },
+            { name: "Google Feud", path: "./gameslist/googlefeud/index.html", icon: "🔍" },
+            { name: "Gun Mayhem", path: "./gameslist/gunmayhem/index.html", icon: "🔫" },
+            { name: "Heads Mayhem", path: "./gameslist/headsmayhem/index.html", icon: "🤯" },
+            { name: "Hex Empire", path: "./gameslist/hex-empire/index.html", icon: "👑" },
+            { name: "HexGL", path: "./gameslist/HexGL/index.html", icon: "🏎️" },
+            { name: "Idle Breakout", path: "./gameslist/idle-breakout/index.html", icon: "🧱" },
+            { name: "Impossible Quiz", path: "./gameslist/impossiblequiz/index.html", icon: "❓" },
+            { name: "Jetpack Joyride", path: "./gameslist/jetpack-joyride/index.html", icon: "🚀" },
+            { name: "Learn To Fly 2", path: "./gameslist/learntofly2/index.html", icon: "🐧" },
+            { name: "Madalin Stunt Cars 2", path: "./gameslist/madalin-stunt-cars-2/index.html", icon: "🏎️" },
+            { name: "Mari0", path: "./gameslist/mari0/index.html", icon: "🍄" },
+            { name: "Matrix Rampage", path: "./gameslist/matrixrampage/index.html", icon: "🕶️" },
+            { name: "Meme 2048", path: "./gameslist/meme2048/index.html", icon: "🐸" },
+            { name: "Minecraft 1.5.2", path: "./gameslist/minecraft-152/index.html", icon: "⛏️" },
+            { name: "Minecraft 1.8.8", path: "./gameslist/minecraft-188/index.html", icon: "⛏️" },
+            { name: "Moto X3M", path: "./gameslist/motox3m/index.html", icon: "🏍️" },
+            { name: "Moto X3M Pool Party", path: "./gameslist/motox3mpoolparty/index.html", icon: "🏖️" },
+            { name: "Moto X3M Spooky Land", path: "./gameslist/motox3mspookyland/index.html", icon: "🎃" },
+            { name: "Moto X3M Winter", path: "./gameslist/motox3mwinter/index.html", icon: "❄️" },
+            { name: "N-gon", path: "./gameslist/n-gon/index.html", icon: "🔷" },
+            { name: "NS-Shaft", path: "./gameslist/ns-shaft/index.html", icon: "🕳️" },
+            { name: "Om Bounce", path: "./gameslist/om-bounce/index.html", icon: "🟢" },
+            { name: "PAC-MAN", path: "./gameslist/pacman/index.html", icon: "🍕" },
+            { name: "Paper Minecraft", path: "./gameslist/paper-minecraft/index.html", icon: "📜" },
+            { name: "Paper.io 2", path: "./gameslist/paperio2/index.html", icon: "📄" },
+            { name: "Pika Pika", path: "./gameslist/pikapika/index.html", icon: "⚡" },
+            { name: "Pixel Speedrun", path: "./gameslist/pixel-speedrun/index.html", icon: "🏃" },
+            { name: "Portal Flash", path: "./gameslist/portalflash/index.html", icon: "🌀" },
+            { name: "Precision Client", path: "./gameslist/precision-client/index.html", icon: "🎯" },
+            { name: "Push the Square", path: "./gameslist/push-the-square/index.html", icon: "🟦" },
+            { name: "Push Your Luck", path: "./gameslist/push-your-luck/index.html", icon: "🎲" },
+            { name: "Retro Bowl", path: "./gameslist/retro-bowl/index.html", icon: "🏈" },
+            { name: "Rolly Vortex", path: "./gameslist/rolly-vortex/index.html", icon: "🌀" },
+            { name: "Rooftop Snipers", path: "./gameslist/rooftop-snipers/index.html", icon: "🔫" },
+            { name: "Run 3", path: "./gameslist/run-3/index.html", icon: "🏃" },
+            { name: "Sand Game", path: "./gameslist/sand-game/index.html", icon: "⏳" },
+            { name: "Slope", path: "./gameslist/slope/index.html", icon: "📉" },
+            { name: "SM64", path: "./gameslist/sm64/index.html", icon: "⭐" },
+            { name: "Smash Karts", path: "./gameslist/smashkarts/index.html", icon: "🏎️" },
+            { name: "Smoking Barrels", path: "./gameslist/smokingbarrels/index.html", icon: "🤠" },
+            { name: "Snowbattle.io", path: "./gameslist/snowbattle/index.html", icon: "⛄" },
+            { name: "Soldier Legend", path: "./gameslist/soldier-legend/index.html", icon: "🎖️" },
+            { name: "Space Invaders", path: "./gameslist/space-invaders/index.html", icon: "👾" },
+            { name: "Subway Surfers", path: "./gameslist/subway-surfers/index.html", icon: "🏄" },
+            { name: "Super Mario 64", path: "./gameslist/super-mario-64/index.html", icon: "🍄" },
+            { name: "Tanuki Sunset", path: "./gameslist/tanuki-sunset/index.html", icon: "🛹" },
+            { name: "Temple Run 2", path: "./gameslist/temple-run-2/index.html", icon: "🏃" },
+            { name: "Terraria", path: "./gameslist/terraria/index.html", icon: "🌳" },
+            { name: "Tetris", path: "./gameslist/tetris/index.html", icon: "🧱" },
+            { name: "The Final Earth", path: "./gameslist/the-final-earth/index.html", icon: "🌍" },
+            { name: "The Battle", path: "./gameslist/thebattle/index.html", icon: "⚔️" },
+            { name: "The Heist", path: "./gameslist/theheist/index.html", icon: "🏦" },
+            { name: "There Is No Game", path: "./gameslist/there-is-no-game/index.html", icon: "🚫" },
+            { name: "The World's Hardest Game", path: "./gameslist/the-worlds-hardest-game/index.html", icon: "🟥" },
+            { name: "The World's Hardest Game 2", path: "./gameslist/the-worlds-hardest-game-2/index.html", icon: "🟥" },
+            { name: "Tiny Fishing", path: "./gameslist/tiny-fishing/index.html", icon: "🎣" },
+            { name: "Totem Destroyer", path: "./gameslist/totem-destroyer/index.html", icon: "🗿" },
+            { name: "Tunnel Rush", path: "./gameslist/tunnel-rush/index.html", icon: "🚇" },
+            { name: "Vex 3", path: "./gameslist/vex-3/index.html", icon: "🏃" },
+            { name: "Vex 4", path: "./gameslist/vex-4/index.html", icon: "🏃" },
+            { name: "Vex 5", path: "./gameslist/vex-5/index.html", icon: "🏃" },
+            { name: "Vex 6", path: "./gameslist/vex-6/index.html", icon: "🏃" },
+            { name: "Vex 7", path: "./gameslist/vex-7/index.html", icon: "🏃" },
+            { name: "Webretro", path: "./gameslist/webretro-local/index.html", icon: "🕹️" },
+            { name: "Wolfenstein 3D", path: "./gameslist/wolfenstein3d/index.html", icon: "🐺" },
+            { name: "Wordle", path: "./gameslist/wordle/index.html", icon: "🔡" }
         ];
 
         const grid = document.getElementById('gameGrid');
         games.forEach(g => {
             const div = document.createElement('div');
             div.className = 'game-card';
-            div.onclick = () => launchGame(g.path, g.name);
+            div.onclick = () => launchGame(g.path);
             div.innerHTML = `<div style="font-size:40px; margin-bottom:10px;">${g.icon}</div><h3>${g.name}</h3>`;
             grid.appendChild(div);
         });
