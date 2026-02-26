@@ -15,6 +15,33 @@
             --card-bg: rgba(255, 255, 255, 0.05);
             --grid-color: rgba(0, 210, 255, 0.08);
             --danger: #ff4e50;
+            --gold: #ffd700;
+            --particle: 255, 255, 255;
+        }
+
+        /* Enhanced Theme Definitions */
+        [data-theme="sunset"] {
+            --primary: #ff512f;
+            --secondary: #dd2476;
+            --bg: #2b0314;
+            --grid-color: rgba(255, 81, 47, 0.15);
+            --particle: 255, 81, 47;
+        }
+
+        [data-theme="midnight"] {
+            --primary: #8e2de2;
+            --secondary: #4a00e0;
+            --bg: #0b0118;
+            --grid-color: rgba(142, 45, 226, 0.2);
+            --particle: 142, 45, 226;
+        }
+
+        [data-theme="emerald"] {
+            --primary: #00b09b;
+            --secondary: #96c93d;
+            --bg: #020f08;
+            --grid-color: rgba(0, 176, 155, 0.15);
+            --particle: 150, 201, 61;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
@@ -24,9 +51,9 @@
             background-color: var(--bg); 
             color: white; 
             min-height: 100vh; 
-            -ms-overflow-style: none; 
             scrollbar-width: none; 
             overflow-x: hidden;
+            transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         #grid-bg {
@@ -35,14 +62,37 @@
             background-size: 45px 45px;
             mask-image: radial-gradient(circle at var(--x, 50%) var(--y, 50%), black 0%, transparent 85%);
             -webkit-mask-image: radial-gradient(circle at var(--x, 50%) var(--y, 50%), black 0%, transparent 85%);
+            transition: background-image 0.6s ease;
         }
 
         #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
 
         nav { position: absolute; top: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 30px 5%; height: 80px; z-index: 110; }
-        .logo { font-size: 1.8rem; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer; }
+        .logo { 
+            font-size: 1.8rem; font-weight: 900; 
+            background: linear-gradient(45deg, var(--primary), var(--secondary)); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            cursor: pointer;
+            filter: drop-shadow(0 0 10px rgba(var(--particle), 0.3));
+        }
         .nav-right { display: flex; gap: 10px; }
-        .nav-btn { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: 700; transition: 0.3s; cursor: pointer; }
+        
+        .nav-btn { 
+            background: var(--card-bg); 
+            border: 1px solid rgba(var(--particle), 0.2); 
+            color: white; 
+            padding: 10px 25px; 
+            border-radius: 50px; 
+            text-decoration: none; 
+            font-weight: 700; 
+            font-size: 0.9rem;
+            transition: 0.3s; 
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-btn:hover { background: rgba(var(--particle), 0.1); border-color: var(--primary); }
 
         .page-section { 
             display: none; opacity: 0; transform: translateY(20px);
@@ -51,12 +101,11 @@
         }
         
         #landing-page { height: 100vh; flex-direction: column; align-items: center; justify-content: center; text-align: center; display: flex; opacity: 1; transform: translateY(0); }
-        #games-page, #settings-page { padding: 120px 5% 60px; max-width: 1400px; margin: auto; }
+        #games-page, #settings-page, #profile-page, #themes-page { padding: 120px 5% 60px; max-width: 1400px; margin: auto; }
 
         #game-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; background: black; }
         iframe { width: 100%; height: 100%; border: none; }
 
-        /* ORIGINAL PAUSE ANIMATIONS */
         #pause-trigger {
             display: none; position: fixed; top: 0; left: 50%; transform: translateX(-50%);
             width: 180px; height: 40px; background: rgba(255, 255, 255, 0.1);
@@ -75,32 +124,145 @@
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* SEARCH BAR */
+        .profile-card { background: #18191c; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
+        .pfp-header { position: relative; background: #2f3136; }
+        #layer-base { width: 100%; height: 100%; object-fit: cover; }
+        .edit-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(4px); }
+        
         .search-container { position: relative; width: 300px; }
-        #gameSearch {
-            width: 100%; padding: 12px 25px; border-radius: 50px;
-            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);
-            color: white; font-weight: 600; outline: none; transition: 0.3s;
-        }
-        #gameSearch:focus { border-color: var(--primary); background: rgba(255,255,255,0.1); }
-
+        #gameSearch { width: 100%; padding: 12px 25px; border-radius: 50px; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); color: white; font-weight: 600; outline: none; transition: 0.3s; }
         .action-btn { width: 280px; margin: 12px; padding: 18px; border-radius: 50px; border: none; font-weight: 900; cursor: pointer; font-size: 1.2rem; transition: 0.3s; color: white; }
-        .primary-btn { background: var(--primary); }
+        .primary-btn { background: var(--primary); box-shadow: 0 10px 20px rgba(var(--particle), 0.2); }
         .secondary-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2); }
         .danger-btn { background: var(--danger); }
 
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
         .game-card { background: var(--card-bg); border-radius: 24px; padding: 35px 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); transition: 0.4s; cursor: pointer; }
-        .game-card:hover { transform: translateY(-10px); border-color: var(--primary); background: rgba(0, 210, 255, 0.05); }
+        .game-card:hover { border-color: var(--primary); transform: translateY(-5px); background: rgba(var(--particle), 0.05); }
+
+        .theme-card {
+            background: var(--card-bg); border-radius: 24px; padding: 40px 20px; text-align: center; 
+            border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; cursor: pointer;
+        }
+        .theme-card:hover { transform: scale(1.05); border-color: var(--primary); }
         
-        h1 { font-size: 5.5rem; font-weight: 900; animation: bounce 3s ease-in-out infinite; }
+        h1 { font-size: 5.5rem; font-weight: 900; animation: bounce 3s ease-in-out infinite; text-shadow: 0 20px 40px rgba(0,0,0,0.3); }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        /* Welcome Setup Styles Refined */
+        #welcome-setup {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 5000; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
+        }
+        .setup-step { 
+            display: none; max-width: 550px; width: 100%; text-align: center; animation: fadeIn 0.5s ease;
+            background: rgba(255,255,255,0.03); padding: 50px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(20px);
+        }
+        .setup-step.active { display: flex; flex-direction: column; align-items: center; }
+        .setup-input {
+            width: 100%; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); padding: 18px 25px; border-radius: 20px; color: white; font-weight: 700; font-size: 1.1rem; outline: none; margin-top: 10px; transition: 0.3s;
+        }
+        .setup-input:focus { border-color: var(--primary); background: rgba(255,255,255,0.08); }
+        
+        /* Custom Select Styling - NEW */
+        .select-wrapper { position: relative; width: 100%; margin-top: 10px; }
+        .select-trigger {
+            width: 100%; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); 
+            padding: 18px 25px; border-radius: 20px; color: white; font-weight: 700; 
+            font-size: 1.1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            transition: 0.3s;
+        }
+        .select-trigger:hover, .select-wrapper.open .select-trigger { border-color: var(--primary); background: rgba(255,255,255,0.08); }
+        
+        .select-options {
+            position: absolute; top: calc(100% + 10px); left: 0; width: 100%; 
+            background: #18191c; border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 20px; overflow: hidden; z-index: 100;
+            display: none; opacity: 0; transform: translateY(-10px);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        }
+        .select-wrapper.open .select-options { display: block; opacity: 1; transform: translateY(0); }
+        
+        .option-item {
+            padding: 15px 25px; cursor: pointer; font-weight: 700; text-align: left;
+            transition: 0.2s; color: rgba(255,255,255,0.8);
+        }
+        .option-item:hover { background: var(--primary); color: white; }
+        .option-item.selected { color: var(--primary); background: rgba(var(--particle), 0.05); }
+        .option-item.selected:hover { color: white; }
+
+        /* Custom File Styling */
+        .file-label {
+            width: 100%; padding: 25px; border: 2px dashed rgba(255,255,255,0.2); border-radius: 20px; margin-top: 10px; cursor: pointer; transition: 0.3s; display: block;
+        }
+        .file-label:hover { border-color: var(--primary); background: rgba(255,255,255,0.05); }
+        #setup-pfp { display: none; }
+
+        .progress-bar { position: absolute; top: 40px; width: 80%; max-width: 500px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; }
     </style>
 </head>
 <body>
 
     <div id="grid-bg"></div>
     <canvas id="particle-canvas"></canvas>
+
+    <div id="welcome-setup">
+        <div class="progress-bar"><div id="setup-progress" class="progress-fill"></div></div>
+
+        <div class="setup-step active" id="step-1">
+            <div style="font-size: 4rem; margin-bottom: 20px;">👋</div>
+            <h2 style="font-size:3.5rem; font-weight:900; margin-bottom:10px; background:linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Welcome.</h2>
+            <p style="margin-bottom:40px; opacity:0.8; font-size: 1.2rem; font-weight: 700;">Let's get you set up.</p>
+            <button onclick="nextStep(2)" class="action-btn primary-btn" style="width:100%;">Start Setup</button>
+        </div>
+
+        <div class="setup-step" id="step-2">
+            <h3 style="font-size: 0.8rem; font-weight:900; color:var(--primary); text-transform:uppercase; margin-bottom: 5px;">Identity</h3>
+            <h2 style="font-size: 2rem; margin-bottom: 25px;">What should we call you?</h2>
+            <input type="text" id="setup-name" placeholder="Enter Alias..." class="setup-input" style="margin-bottom: 20px;">
+            <button onclick="nextStep(3)" class="action-btn primary-btn" style="width:100%;">Continue</button>
+        </div>
+
+        <div class="setup-step" id="step-3">
+            <h3 style="font-size: 0.8rem; font-weight:900; color:var(--primary); text-transform:uppercase; margin-bottom: 5px;">About</h3>
+            <h2 style="font-size: 2rem; margin-bottom: 25px;">Tell us about yourself</h2>
+            <input type="text" id="setup-bio" placeholder="Short bio..." class="setup-input" style="margin-bottom: 20px;">
+            <button onclick="nextStep(4)" class="action-btn primary-btn" style="width:100%;">Continue</button>
+        </div>
+
+        <div class="setup-step" id="step-4">
+            <h3 style="font-size: 0.8rem; font-weight:900; color:var(--primary); text-transform:uppercase; margin-bottom: 5px;">Theme</h3>
+            <h2 style="font-size: 2rem; margin-bottom: 25px;">Pick a theme</h2>
+            
+            <div class="select-wrapper" id="theme-select-container">
+                <div class="select-trigger" onclick="toggleCustomSelect()">
+                    <span id="selected-theme-text">Neon Blue (Default)</span>
+                    <span style="font-size: 0.7rem; color: var(--primary);">▼</span>
+                </div>
+                <div class="select-options">
+                    <div class="option-item selected" data-value="default" onclick="selectThemeOption(this)">Cyber Blue (Default)</div>
+                    <div class="option-item" data-value="sunset" onclick="selectThemeOption(this)">Sunset Pink</div>
+                    <div class="option-item" data-value="midnight" onclick="selectThemeOption(this)">Midnight Purple</div>
+                    <div class="option-item" data-value="emerald" onclick="selectThemeOption(this)">Emerald Green</div>
+                </div>
+                <input type="hidden" id="setup-theme" value="default">
+            </div>
+
+            <button onclick="nextStep(5)" class="action-btn primary-btn" style="width:100%; margin-top: 30px;">Last Step</button>
+        </div>
+
+        <div class="setup-step" id="step-5">
+            <h3 style="font-size: 0.8rem; font-weight:900; color:var(--primary); text-transform:uppercase; margin-bottom: 5px;">Profile</h3>
+            <h2 style="font-size: 2rem; margin-bottom: 25px;">Profile Picture</h2>
+            <label class="file-label" for="setup-pfp">
+                <div id="file-status" style="font-weight: 700; color: var(--primary);">Click to upload avatar</div>
+                <div style="font-size: 0.8rem; opacity: 0.6; margin-top: 5px;">PNG, JPG supported (Optional)</div>
+            </label>
+            <input type="file" id="setup-pfp" accept="image/*" onchange="updateFileLabel(this)">
+            <button onclick="finishSetup()" class="action-btn primary-btn" style="width:100%; margin-top: 25px;">Finish</button>
+        </div>
+    </div>
 
     <div id="pause-trigger" onclick="togglePause()">PAUSE GAME</div>
 
@@ -113,6 +275,8 @@
     <nav>
         <div class="logo" onclick="showPage('landing-page')">DASHERS HUB 🎉</div>
         <div class="nav-right">
+            <button onclick="showPage('profile-page')" class="nav-btn">Profile</button>
+            <button onclick="showPage('themes-page')" class="nav-btn">Themes</button>
             <button onclick="showPage('settings-page')" class="nav-btn">Settings</button>
             <a href="https://discord.com/invite/qe7YrABHdr" target="_blank" class="nav-btn">Discord</a>
         </div>
@@ -123,7 +287,7 @@
         <div style="height:0px; margin-bottom:80px;">
             <div id="subtitle" style="font-size: 1.4rem; font-weight:700; color:var(--secondary); transition: 0.8s ease;">dashers network or dashers hub?</div>
         </div>
-        <button onclick="showPage('games-page')" style="padding:22px 60px; font-size:1.4rem; font-weight:900; background:linear-gradient(45deg, var(--primary), var(--secondary)); border:none; border-radius:100px; cursor:pointer; color:white;">Library</button>
+        <button onclick="showPage('games-page')" style="padding:22px 60px; font-size:1.4rem; font-weight:900; background:linear-gradient(45deg, var(--primary), var(--secondary)); border:none; border-radius:100px; cursor:pointer; color:white; box-shadow: 0 15px 30px rgba(var(--particle), 0.3);">Library</button>
     </section>
 
     <section id="games-page" class="page-section">
@@ -139,15 +303,75 @@
         <div class="grid-container" id="gameGrid"></div>
     </section>
 
+    <section id="profile-page" class="page-section">
+        <div style="margin-bottom: 40px;">
+            <span style="color:var(--primary); cursor:pointer; font-weight:700;" onclick="showPage('landing-page')">← Back to Home</span>
+            <h2 style="font-size: 2.5rem; font-weight: 900; margin-top:10px;">User Profile</h2>
+        </div>
+        
+        <div style="width: 100%; max-width: 1000px; margin: 0 auto;">
+            <div class="profile-card" style="width: 100%; display: flex; flex-direction: row; align-items: stretch; min-height: 400px;">
+                <div class="pfp-header" style="width: 40%; height: auto; min-height: 400px; border-right: 1px solid rgba(255,255,255,0.1);">
+                    <img id="layer-base" src="https://i.ibb.co/Lzr9xN4b/image-14ae60.png" style="height: 100%;">
+                    <div id="image-edit-overlay" class="edit-overlay" onclick="document.getElementById('pfp-upload').click()">
+                        <div style="background: white; color: black; padding: 10px 20px; border-radius: 50px; font-weight: 900; font-size: 0.8rem;">CHANGE IMAGE</div>
+                    </div>
+                    <input type="file" id="pfp-upload" accept="image/*" style="display:none" onchange="handlePFPUpload(this)">
+                </div>
+
+                <div style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                    <div>
+                        <p style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--primary); margin-bottom: 10px; font-weight: 700;">Account Identity</p>
+                        <input type="text" id="user-name-input" value="Dasher_User" disabled 
+                               style="background:transparent; border:none; color:white; font-size:3.5rem; font-weight: 900; width:100%; outline:none; transition: 0.3s; margin-bottom: 5px;">
+                        <input type="text" id="user-bio-input" value="Hub Resident" disabled 
+                               style="background:transparent; border:none; color:var(--secondary); font-size:1.1rem; font-weight: 600; width:100%; outline:none; transition: 0.3s; opacity: 0.8;">
+                    </div>
+
+                    <div style="width: 100%; height: 1px; background: rgba(255,255,255,0.1); margin: 30px 0;"></div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <button id="edit-btn" onclick="toggleEditMode(true)" class="nav-btn" style="padding: 15px 40px; font-size: 1rem;">Edit Profile</button>
+                        <button id="save-btn" onclick="toggleEditMode(false)" class="nav-btn" style="display:none; padding: 15px 40px; font-size: 1rem; background: var(--primary); border:none;">Save Changes</button>
+                    </div>
+                    <div id="save-msg" style="font-size: 0.9rem; color: var(--secondary); opacity: 0; transition: 0.3s; margin-top: 20px;">Changes saved!</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="themes-page" class="page-section">
+        <div style="margin-bottom: 40px;">
+            <span style="color:var(--primary); cursor:pointer; font-weight:700;" onclick="showPage('landing-page')">← Back to Home</span>
+            <h2 style="font-size: 2.5rem; font-weight: 900; margin-top:10px;">Hub Themes</h2>
+        </div>
+        <div class="grid-container">
+            <div class="theme-card" onclick="setTheme('default')" style="background: #0f172a;">
+                <h3 style="color: #00d2ff;">Cyber Blue</h3>
+                <p style="font-size: 0.8rem; opacity: 0.7; margin-top:10px;">Blue-green gradient</p>
+            </div>
+            <div class="theme-card" onclick="setTheme('sunset')" style="background: #2b0314;">
+                <h3 style="color: #ff512f;">Sunset Pink</h3>
+                <p style="font-size: 0.8rem; opacity: 0.7; margin-top:10px;">Color of a sunset</p>
+            </div>
+            <div class="theme-card" onclick="setTheme('midnight')" style="background: #0b0118;">
+                <h3 style="color: #8e2de2;">Midnight Purple</h3>
+                <p style="font-size: 0.8rem; opacity: 0.7; margin-top:10px;">Dark purple</p>
+            </div>
+            <div class="theme-card" onclick="setTheme('emerald')" style="background: #020f08;">
+                <h3 style="color: #00b09b;">Emerald Green</h3>
+                <p style="font-size: 0.8rem; opacity: 0.7; margin-top:10px;">Nature-ey emerald</p>
+            </div>
+        </div>
+    </section>
+
     <section id="settings-page" class="page-section">
         <div style="margin-bottom: 40px;">
             <span style="color:var(--primary); cursor:pointer; font-weight:700;" onclick="showPage('landing-page')">← Back to Home</span>
             <h2 style="font-size: 2.5rem; font-weight: 900; margin-top:10px;">Settings</h2>
         </div>
         <div style="background: var(--card-bg); padding: 40px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); max-width: 600px;">
-            <h3 style="margin-bottom: 15px;">Dashboard Settings</h3>
-            <p style="opacity: 0.7; margin-bottom: 30px;">Hub visual and performance options.</p>
-            <button class="action-btn danger-btn" onclick="alert('Settings Reset')" style="width: 100%; margin: 0;">RESET SETTINGS</button>
+            <button class="action-btn danger-btn" onclick="localStorage.clear(); location.reload();" style="width: 100%; margin: 0;">WIPE ALL DATA</button>
         </div>
     </section>
 
@@ -160,23 +384,10 @@
 
         function showPage(pageId) {
             const sections = document.querySelectorAll('.page-section');
-            sections.forEach(s => {
-                s.style.display = 'none';
-                s.style.opacity = '0';
-                s.style.transform = 'translateY(20px)';
-            });
-
+            sections.forEach(s => { s.style.display = 'none'; s.style.opacity = '0'; s.style.transform = 'translateY(20px)'; });
             const target = document.getElementById(pageId);
-            if (pageId === 'landing-page') {
-                target.style.display = 'flex';
-            } else {
-                target.style.display = 'block';
-            }
-            
-            setTimeout(() => {
-                target.style.opacity = '1';
-                target.style.transform = 'translateY(0)';
-            }, 50);
+            target.style.display = (pageId === 'landing-page') ? 'flex' : 'block';
+            setTimeout(() => { target.style.opacity = '1'; target.style.transform = 'translateY(0)'; }, 50);
         }
 
         const phrases = ["i cant decide, dashers network or dashers hub?", "the chickens are watching", "honestly sushi is overrated", "join our discord! we have 4 mil proxy links ready to be used", "penalty is the goat (and birdcat and virgo too pls dont hurt me)", "you should never argue with dumb people", "i wonder why no one argues with me", "we are special", "bro just play some games already", "we support the lbgtq (light blue greasy tender quesadillas)", "inspired by frosty chicken"];
@@ -193,13 +404,22 @@
             }
         }, 4000);
 
+        function setTheme(themeName) {
+            if (themeName === 'default') {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('user-theme', 'default');
+            } else {
+                document.documentElement.setAttribute('data-theme', themeName);
+                localStorage.setItem('user-theme', themeName);
+            }
+        }
+
         function togglePause() {
             if (!isPlaying) return;
             isPaused = !isPaused;
             const menu = document.getElementById('pause-overlay');
             const frame = document.getElementById('game-frame');
             const trigger = document.getElementById('pause-trigger');
-
             if (isPaused) {
                 menu.style.display = 'flex';
                 frame.style.opacity = '0.05'; 
@@ -213,12 +433,11 @@
         }
 
         function launchGame(url) {
-            isPlaying = true;
+            isPlaying = true; isPaused = false;
             document.getElementById('game-view').style.display = 'block';
             document.getElementById('pause-trigger').style.display = 'flex';
             const frame = document.getElementById('game-frame');
             frame.src = url;
-            frame.style.opacity = '1';
             frame.onload = () => frame.focus();
         }
 
@@ -230,10 +449,37 @@
             document.getElementById('game-frame').src = ""; 
         }
 
+        function toggleEditMode(isEditing) {
+            const nameInput = document.getElementById('user-name-input');
+            const bioInput = document.getElementById('user-bio-input');
+            const editBtn = document.getElementById('edit-btn'), saveBtn = document.getElementById('save-btn');
+            const overlay = document.getElementById('image-edit-overlay');
+            if (isEditing) {
+                nameInput.disabled = false; bioInput.disabled = false; nameInput.focus();
+                editBtn.style.display = "none"; saveBtn.style.display = "block"; overlay.style.display = "flex";
+            } else {
+                nameInput.disabled = true; bioInput.disabled = true; editBtn.style.display = "block"; saveBtn.style.display = "none"; overlay.style.display = "none";
+                localStorage.setItem('user-name', nameInput.value);
+                localStorage.setItem('user-bio', bioInput.value);
+                document.getElementById('save-msg').style.opacity = "1";
+                setTimeout(() => document.getElementById('save-msg').style.opacity = "0", 2000);
+            }
+        }
+
+        function handlePFPUpload(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('layer-base').src = e.target.result;
+                    localStorage.setItem('user-custom-pfp', e.target.result);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
         function filterGames() {
             const query = document.getElementById('gameSearch').value.toLowerCase();
-            const cards = document.querySelectorAll('.game-card');
-            cards.forEach(card => {
+            document.querySelectorAll('.game-card').forEach(card => {
                 const name = card.querySelector('h3').innerText.toLowerCase();
                 card.style.display = name.includes(query) ? 'block' : 'none';
             });
@@ -243,18 +489,132 @@
         let particles = [];
         function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
         window.addEventListener('resize', resize); resize();
-        class P { constructor() { this.reset(); } reset() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.s = Math.random()*2+1; this.v = Math.random()*1+0.5; this.o = Math.random()*0.5+0.2; } update() { this.y += this.v; if (this.y > canvas.height) this.y = -10; } draw() { ctx.fillStyle = `rgba(255,255,255,${this.o})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.s, 0, Math.PI*2); ctx.fill(); } }
+        
+        class P { 
+            constructor() { this.reset(); } 
+            reset() { 
+                this.x = Math.random()*canvas.width; 
+                this.y = Math.random()*canvas.height; 
+                this.s = Math.random()*2+1; 
+                this.v = Math.random()*1+0.5; 
+                this.o = Math.random()*0.5+0.2; 
+            } 
+            update() { 
+                this.y += this.v; 
+                if (this.y > canvas.height) this.y = -10; 
+            } 
+            draw() { 
+                const pColor = getComputedStyle(document.documentElement).getPropertyValue('--particle');
+                ctx.fillStyle = `rgba(${pColor},${this.o})`; 
+                ctx.beginPath(); 
+                ctx.arc(this.x, this.y, this.s, 0, Math.PI*2); 
+                ctx.fill(); 
+            } 
+        }
+
         for(let i=0; i<80; i++) particles.push(new P());
         function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(anim); }
         anim();
-
         document.addEventListener('mousemove', e => {
             document.getElementById('grid-bg').style.setProperty('--x', e.clientX + 'px');
             document.getElementById('grid-bg').style.setProperty('--y', e.clientY + 'px');
         });
 
+        // --- CUSTOM SELECT LOGIC ---
+        function toggleCustomSelect() {
+            document.getElementById('theme-select-container').classList.toggle('open');
+        }
+
+        function selectThemeOption(element) {
+            const val = element.getAttribute('data-value');
+            const txt = element.innerText;
+            
+            // Update UI
+            document.getElementById('selected-theme-text').innerText = txt;
+            document.getElementById('setup-theme').value = val;
+            
+            // Highlight selected
+            document.querySelectorAll('.option-item').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            // Close menu and apply theme preview
+            document.getElementById('theme-select-container').classList.remove('open');
+            setTheme(val);
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', (e) => {
+            const select = document.getElementById('theme-select-container');
+            if (select && !select.contains(e.target)) {
+                select.classList.remove('open');
+            }
+        });
+
+        // Wizard Setup Logic
+        function nextStep(step) {
+            document.querySelectorAll('.setup-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step-${step}`).classList.add('active');
+            document.getElementById('setup-progress').style.width = ((step - 1) / 4) * 100 + '%';
+        }
+
+        function updateFileLabel(input) {
+            const status = document.getElementById('file-status');
+            if (input.files && input.files[0]) {
+                status.innerText = "Selected: " + input.files[0].name;
+                status.style.color = "var(--secondary)";
+            }
+        }
+
+        function finishSetup() {
+            const name = document.getElementById('setup-name').value || "Dasher_User";
+            const bio = document.getElementById('setup-bio').value || "Hub Resident";
+            const theme = document.getElementById('setup-theme').value;
+            const pfpInput = document.getElementById('setup-pfp');
+
+            localStorage.setItem('user-name', name);
+            localStorage.setItem('user-bio', bio);
+            document.getElementById('user-name-input').value = name;
+            document.getElementById('user-bio-input').value = bio;
+            setTheme(theme);
+
+            if (pfpInput.files && pfpInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    localStorage.setItem('user-custom-pfp', e.target.result);
+                    document.getElementById('layer-base').src = e.target.result;
+                    completeTransition();
+                };
+                reader.readAsDataURL(pfpInput.files[0]);
+            } else {
+                completeTransition();
+            }
+        }
+
+        function completeTransition() {
+            const setup = document.getElementById('welcome-setup');
+            setup.style.opacity = '0';
+            setup.style.transition = '0.5s';
+            setTimeout(() => { setup.style.display = 'none'; }, 500);
+        }
+
+        window.addEventListener('load', () => {
+            const n = localStorage.getItem('user-name'), 
+                  b = localStorage.getItem('user-bio'),
+                  p = localStorage.getItem('user-custom-pfp'), 
+                  t = localStorage.getItem('user-theme');
+            
+            if (!n) {
+                document.getElementById('welcome-setup').style.display = 'flex';
+            } else {
+                document.getElementById('user-name-input').value = n;
+                if(b) document.getElementById('user-bio-input').value = b;
+                if(p) document.getElementById('layer-base').src = p;
+                if(t && t !== 'default') setTheme(t);
+            }
+        });
+
         const games = [
-{ name: "1", path: "./gameslist/1/index.html", icon: "🥇" },
+    { name: "1", path: "./gameslist/1/index.html", icon: "🥇" },
     { name: "1v1space", path: "./gameslist/1v1space/index.html", icon: "🚀" },
     { name: "2048", path: "./gameslist/2048/index.html", icon: "🔢" },
     { name: "9007199254740992", path: "./gameslist/9007199254740992/index.html", icon: "♾️" },
