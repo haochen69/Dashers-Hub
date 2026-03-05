@@ -103,8 +103,24 @@
         #landing-page { height: 100vh; flex-direction: column; align-items: center; justify-content: center; text-align: center; display: flex; opacity: 1; transform: translateY(0); }
         #games-page, #settings-page, #profile-page, #themes-page { padding: 120px 5% 60px; max-width: 1400px; margin: auto; }
 
-        #game-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; background: black; }
-        iframe { width: 100%; height: 100%; border: none; }
+/* Updated to fix dark game bug */
+#game-view { 
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    z-index: 2000; 
+    background: #0f172a; /* Match your --bg color instead of pure black */
+}
+
+iframe { 
+    width: 100%; 
+    height: 100%; 
+    border: none; 
+    background: white; /* Ensures the game has a solid base color to render on */
+}
 
         #pause-trigger {
             display: none; position: fixed; top: 0; left: 50%; transform: translateX(-50%);
